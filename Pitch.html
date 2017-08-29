@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head><title></title>
+</head>
+<body>
+
+<button onclick="start()">play</button>
+<br/><br/>
+
+Note: <form onsubmit="javascript:check();return false;"><input type="text" size="4" id="ans"></form>
+<br/><br/>
+<div id="scores">Scores:<br/></div>
+<script type="text/javascript">
+var notes={
+"C":261.63,
+"C#":277.18,
+"DB":277.18,
+"D":293.66,
+"D#":311.13,
+"EB":311.13,
+"E":329.63,
+"F":349.23,
+"F#":369.99,
+"GB":369.99,
+"G":392.00,
+"G#":415.30,
+"AB":415.30,
+"A":440,
+"A#":466.16,
+"BB":466.16,
+"B":493.88,
+}
+var attempts=0;
+function check(){
+  var n=document.getElementById("ans").value.toUpperCase();
+  if (typeof notes[n] !== "undefined") {
+    attempts++;
+    if (Math.round(notes[n]) == Math.round(frequency)) {
+    frequency=0;
+    document.getElementById("scores").innerHTML+=attempts+" attempts<br/>";
+    document.getElementById("ans").value="";
+    }
+  }
+  
+}
+ 
+function AudioDataDestination(sampleRate, readFn) {
+  var audio = new Audio();
+  audio.mozSetup(1, sampleRate);
+  var currentWritePosition = 0;
+  var prebufferSize = sampleRate / 4;
+  var tail = null, tailPosition;
+
+  setInterval(function() {
+    var written;
+    if(tail) {
+      written = audio.mozWriteAudio(tail.subarray(tailPosition));
+      currentWritePosition += written;
+      tailPosition += written;
+      if(tailPosition < tail.length) {return;}
+      tail = null;
+    }
+    var currentPosition = audio.mozCurrentSampleOffset();
+    var available = currentPosition + prebufferSize - currentWritePosition;
+    if(available > 0) {
+      var soundData = new Float32Array(available);
+      readFn(soundData);
+      written = audio.mozWriteAudio(soundData);
+      if(written < soundData.length) {
+        tail = soundData;
+        tailPosition = written;
+      }
+      currentWritePosition += written;
+    }
+  }, 100);
+}
+var frequency = 0, currentSoundSample;
+var sampleRate = 44100;
+
+function requestSoundData(soundData) {
+  if (!frequency) { return; }
+  var k = 2* Math.PI * frequency / sampleRate;
+  for (var i=0, size=soundData.length; i<size; i++) {
+    soundData[i] = Math.sin(k * currentSoundSample++);
+  }        
+}
+var audioDestination = new AudioDataDestination(sampleRate, requestSoundData);
+
+function start() {
+  attempts=0;
+  currentSoundSample = 0;
+  frequency=440 * Math.pow(2, (Math.floor(Math.random()*12)-9)/12);
+  document.getElementById("ans").focus();
+}
+
+</script>
+</body>
+</html>

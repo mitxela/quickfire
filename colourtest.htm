@@ -1,0 +1,130 @@
+<!DOCTYPE html><html><head><meta charset=utf-8>
+<title>Colour Vision Test</title>
+<style>
+body{background: #222222;color:white;font-family:sans-serif;}
+.b{width:40px;height:40px;display:inline-block;border:1px solid black;position:relative}
+.t {border: 1px solid #ddd;margin:20px 10px;padding:5px 5px 0px 5px;display:inline-block; white-space:nowrap}
+#s{font-size:large;}
+#m{width:876px;border:1px solid #444;background:#2a2a2a;margin:10px 40px;text-align:center;font-size:small; }
+</style>
+</head><body>
+
+<div id=m>
+ <p><b>Drag and drop the colors in each row to arrange them by hue order.</b>
+ <p>The first and last color chips are fixed. Click on "Score Test" when done.
+</div>
+
+<div id=test></div>
+
+<button onclick='score();return false'>Score Test</button>
+<span id=s></span>
+
+<script>
+test=document.getElementById('test');
+tests=[];
+function score(){
+  var sum=0;
+  for (var i in tests) {
+    var s = calcScore(tests[i]);
+    sum+=s;
+    var j=tests[i].nextSibling;
+    if(!j || j.className!='j') {j=document.createElement('span'); test.insertBefore(j, tests[i].nextSibling); j.className='j'}
+    j.innerHTML=s.toFixed(1)+"%";
+  }
+  document.getElementById('s').innerHTML='Total score: '+(sum/8).toFixed(1)+'%';
+}
+
+
+function calcScore(obj){
+  var t='', o=obj.firstChild;
+  do { t+=o.getAttribute('data-n') } while (o=o.nextSibling)
+  return (20-Levenshtein(t,"ABCDEFGHIJKLMNOPQRSTUV"))/0.2;
+}
+function Levenshtein(s, t){
+  var m=s.length, n=t.length, d=[], i,j, cost=0;
+  function min(a,b,c){
+    if (a<=b&&a<=c) return a;
+    if (b<=a&&b<=c) return b;
+    return c;
+  }
+  for (i=0;i<=m;i++) d[i] = [i];
+  for(j=1;j<=n;j++) {
+    d[0][j] = j;
+    for (i=1;i<=m;i++){
+      cost = (s.charAt(i-1) == t.charAt(j-1))?0:1;
+      d[i][j] = min(d[i-1][j  ] + 1,     // deletion
+                    d[i  ][j-1] + 1,     // insertion
+                    d[i-1][j-1] + cost)  // substitution
+    }
+  }
+  return d[m][n]
+}
+function makeDraggable(obj){
+  obj.onmousedown=function(e){
+    obj.style.zIndex=2;
+    obj.style.cursor='move';
+    var sx=e.clientX, sy=e.clientY;
+    document.onmousemove=function(e){
+      var x=e.clientX-sx, y=e.clientY-sy;
+      while (x>21 && obj.nextSibling.nextSibling) {
+        obj.parentNode.insertBefore( obj.parentNode.removeChild(obj.nextSibling) , obj );
+        sx+=42;x-=42;
+      }
+      while (x<-21 && obj.previousSibling.previousSibling){
+        obj.parentNode.insertBefore( obj.parentNode.removeChild(obj.previousSibling) , obj.nextSibling );
+        sx-=42;x+=42;
+      }
+      obj.style.left=x+'px';
+      obj.style.top =y+'px';
+    }
+    document.onmouseup=function(e){
+      obj.style.left='0px';
+      obj.style.top ='0px';
+      obj.style.zIndex=0;
+      obj.style.cursor='';
+      document.onmouseup=null;
+      document.onmousemove=null;
+    }
+  }
+
+}
+
+function clamp(n){
+  if (n < 0) return 0;
+  if (n > 255) return 255;
+  return Math.round(n);
+}
+
+function yiq2rgb(y,i,q){
+	var r = clamp((y + ( 0.956 * i) + ( 0.621 * q)) * 255);
+	var g = clamp((y + (-0.272 * i) + (-0.647 * q)) * 255);
+	var b = clamp((y + (-1.105 * i) + ( 1.702 * q)) * 255);
+
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+function shuffle(a,b,c,d){c=a.length-1;while(c-1)b=1+Math.random()*c--|0,d=a[c],a[c]=a[b],a[b]=d}
+
+
+pi=3.1415926535;
+for (i=8;i--;) (function (offset){
+  var c=document.createElement('div');
+  var o=[];
+  for (var i=0;i<22;i++) {
+    var angle = (2*pi*i/22) *0.1 +offset
+    o[i]=document.createElement('span');
+    o[i].className='b';
+    o[i].setAttribute('data-n',String.fromCharCode(i+65));
+    o[i].style.backgroundColor=yiq2rgb(0.5,0.11*Math.cos(angle),0.11*Math.sin(angle))
+    if (i&&i!=21) makeDraggable(o[i],i)
+  }
+  shuffle(o);
+  for (var i in o) c.appendChild(o[i]);
+  c.className='t';
+  test.appendChild(c);
+  tests.push(c);
+})(2*pi*i/8);
+
+
+</script>
+</body></html>

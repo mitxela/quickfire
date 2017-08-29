@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><title></title>
+<meta charset=utf-8>
+</head><body><style>div{font-size:50pt}td{font-size:30pt}</style>
+<div id=t></div>
+<input type=text onkeyup="checkChar(this)"><br><br>
+Font: <select autocomplete=off onchange='document.body.style.fontFamily=this.value'>
+<option value="">default</option><option value="ＭＳ 明朝">mincho</option>
+</select>
+<script>
+table={"ん":"n","わ":"wa","ら":"ra","や":"ya","ま":"ma","は":"ha","な":"na","た":"ta","さ":"sa","か":"ka","あ":"a","り":"ri","み":"mi","ひ":"hi","に":"ni","ち":"chi","し":"shi","き":"ki","い":"i","る":"ru","ゆ":"yu","む":"mu","ふ":"fu","ぬ":"nu","つ":"tsu","す":"su","く":"ku","う":"u","れ":"re","め":"me","へ":"he","ね":"ne","て":"te","せ":"se","け":"ke","え":"e","を":"wo","ろ":"ro","よ":"yo","も":"mo","ほ":"ho","の":"no","と":"to","そ":"so","こ":"ko","お":"o"}
+h=['n','w','r','y','m','h','n','t','s','k',' ',' ','ん','わ','ら','や','ま','は','な','た','さ','か','あ','a','','','り','','み','ひ','に','ち','し','き','い','i','','','る','ゆ','む','ふ','ぬ','つ','す','く','う','u','','','れ','','め','へ','ね','て','せ','け','え','e','','を','ろ','よ','も','ほ','の','と','そ','こ','お','o']
+set=[];
+
+function toggle(l){
+  if(-1!=(i=set.indexOf(l))) set.splice(i,1); else set.push(l);
+  l=document.getElementById('t_'+table[l]).style; l.color=l.color=='red'?'':'red';
+}
+function checkChar(o){
+  if (o.value==table[c]) {
+    while (set.length>1&&t.innerHTML==c) c=set[Math.floor(Math.random()*set.length)];
+    t.innerHTML=c;
+    o.value="";
+  }
+}
+document.onkeydown=function(){document.querySelector('input').focus()}
+
+a='<table><tr>';
+for (j=0;j<6;j++) {
+  a+='</tr><tr>'
+  for (i=0;i<12;i++) 
+    if (s=table[l=h[j*12+i]]) a+='<td title='+s+' id=t_'+s+' onclick=toggle("'+l+'");>'+l+'</td>';
+    else a+='<td>'+l+'</td>';
+}
+document.write(a+'</tr></table>')
+for (i in s=['あ','い','う','え','お']) toggle(s[i]);
+t.innerHTML=c=set[0];
+</script>
+</body></html>

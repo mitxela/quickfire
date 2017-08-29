@@ -1,0 +1,50 @@
+<html><head></head><body>
+<script type='text/javascript'>
+var z=0,x=0,a=new Array();
+
+var size=parseInt(window.location.search.substring(1))
+
+for (i=1;i<=size*2;i++) {
+  for (j=1;j<=size;j++) a.push(i*j);
+  if (i<size*2) a.push("\n");
+}
+
+
+function newAdd(ans) {
+  
+  if (a[x]=="\n") document.getElementById("out").innerHTML+=a[x++];
+  if (ans==a[x]) {
+   document.getElementById("out").innerHTML+=a[x++]+"\t";
+   document.getElementById("count").innerHTML=++z;
+   if (x==a.length) {
+    alert("Done in "+((new Date().getTime())-time)/1000+" seconds.");
+    x++;
+   }
+   return "";
+  } 
+  return ans;
+}
+
+
+var time= new Date().getTime();
+
+
+
+
+</script>
+
+<div id='scores' style='font-size:20pt;float:right;clear:right;' ></div>
+<pre>
+<div id='out'>
+</div>
+</pre>
+<input type='text' size='30' id='input' onkeyup='this.value=newAdd(this.value);'>
+<br><br><br>
+<div id='count' style='font-size:20pt;'>
+</div>
+<div id='t' style='font-size:20pt;'>
+</div>
+
+
+
+</body></html>

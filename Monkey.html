@@ -1,0 +1,52 @@
+<html>
+<head><title></title></head>
+<body>
+<style type='text/css'>
+.a{font-size:50pt;display:inline-block; margin:30px; padding:5px 20px 5px 20px; width:70px; text-align:center; background-color:GreenYellow;}
+</style>
+<div id='main' style='width:800px;'>Display time (milliseconds): <input type='text' id='t' value='500' />
+<button onclick="time=parseInt(document.getElementById('t').value);num=5;start();">Start</button></div>
+<script>
+var left,num,timer=[];
+
+function start() {
+  document.getElementById("main").innerHTML="";
+  left=num;
+  
+  var s=new Array();
+  for (i=0;i<num;i++) s[i]=i+1;
+  s=shuffle(s);  
+  
+  for (i=0;i<num;i++) {
+    document.getElementById("main").innerHTML+="<div class='a' onmousedown='cl("+(num+1-s[i])+",this);'><span id='b"+s[i]+"'>"+s[i]+"<span></div>";
+    if (typeof (timer[i])!="undefined") {clearTimeout(timer[i]);}
+    timer[i]=setTimeout("document.getElementById('b"+s[i]+"').style.visibility='hidden';",time);
+  }
+}
+
+function cl(n,obj){
+  if (left==n) {
+    obj.style.visibility="hidden";
+    if (0==--left) {
+      num=Math.min(++num,20);
+      start();
+    }
+  } else {
+    var temp=document.getElementsByTagName("span");
+    for (var i=temp.length;i--;) temp[i].style.visibility=temp[i].parentNode.style.visibility;
+    
+    alert("Wrong");
+    num=5;
+    start();  
+  }
+}
+
+shuffle = function(o){
+	for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+	return o;
+};
+</script>
+
+
+</body>
+</html>

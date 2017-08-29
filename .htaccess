@@ -1,0 +1,5 @@
+AddType audio/ogg oga ogg
+
+RedirectMatch 302 /other/quickfire/$ /projects/quickfire?
+
+

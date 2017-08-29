@@ -1,0 +1,141 @@
+<html>
+<head><title>Capitals</title>
+<style>
+div{font-size:18pt;text-align:center;vertical-align:middle;}
+.dragclass{border:0px;display:inline-block; padding:15px; position:relative;}
+.drag {padding:5px; margin:5px 0px; display:inline-block; border:1px solid black;}
+.out {border:0px; text-align: justify; text-align-last: justify;}
+.out:after {content: ""; display: inline-block; width: 100%;}
+
+span{white-space:nowrap;}
+
+.thumb {width:80px;height:64px;background-image:url(FlagStrip.png);margin-left:auto;margin-right:auto;}
+</style>
+
+</head>
+<body><br/><br/>
+
+<div id='output'></div>
+<br/><br/>
+<div id='output2' class='out'></div>
+
+<script>
+countries="Afghanistan,Albania,Algeria,Andorra,Angola,Antigua<br/>and Barbuda,Argentina,Armenia,Australia,Austria,Azerbaijan,The Bahamas,Bahrain,Bangladesh,Barbados,Belarus,Belgium,Belize,Benin,Bhutan,Bolivia,Bosnia and<br/>Herzegovina,Botswana,Brazil,Brunei,Bulgaria,Burkina Faso,Burundi,Cambodia,Cameroon,Canada,Cape Verde,Central African<br/>Republic,Chad,Chile,China,Colombia,Comoros,Republic of<br/>the Congo,Democratic Republic<br/>of the Congo,Costa Rica,Cote d'Ivoire,Croatia,Cuba,Cyprus,Czech Republic,Denmark,Djibouti,Dominica,Dominican Republic,East Timor,Ecuador,Egypt,El Salvador,Equatorial Guinea,Eritrea,Estonia,Ethiopia,Fiji,Finland,France,Gabon,The Gambia,Georgia,Germany,Ghana,Greece,Grenada,Guatemala,Guinea,Guinea-Bissau,Guyana,Haiti,Honduras,Hungary,Iceland,India,Indonesia,Iran,Iraq,Ireland,Israel,Italy,Jamaica,Japan,Jordan,Kazakhstan,Kenya,Kiribati,North Korea,South Korea,Kosovo,Kuwait,Kyrgyzstan,Laos,Latvia,Lebanon,Lesotho,Liberia,Libya,Liechtenstein,Lithuania,Luxembourg,Macedonia,Madagascar,Malawi,Malaysia,Maldives,Mali,Malta,Marshall Islands,Mauritania,Mauritius,Mexico,Federated States<br/>of Micronesia,Moldova,Monaco,Mongolia,Montenegro,Morocco,Mozambique,Myanmar (Burma),Namibia,Nauru,Nepal,Netherlands,New Zealand,Nicaragua,Niger,Nigeria,Norway,Oman,Pakistan,Palau,Panama,Papua New Guinea,Paraguay,Peru,Philippines,Poland,Portugal,Qatar,Romania,Russia,Rwanda,Saint Kitts and Nevis,Saint Lucia,Saint Vincent<br/>and the Grenadines,Samoa,San Marino,Sao Tome<br/>and Principe,Saudi Arabia,Senegal,Serbia,Seychelles,Sierra Leone,Singapore,Slovakia,Slovenia,Solomon Islands,Somalia,South Africa,South Sudan,Spain,Sri Lanka,Sudan,Suriname,Swaziland,Sweden,Switzerland,Syria,Taiwan,Tajikistan,Tanzania,Thailand,Togo,Tonga,Trinidad<br/>and Tobago,Tunisia,Turkey,Turkmenistan,Tuvalu,Uganda,Ukraine,United Arab<br/>Emirates,United Kingdom,United States<br/>of America,Uruguay,Uzbekistan,Vanuatu,Vatican City,Venezuela,Vietnam,Yemen,Zambia,Zimbabwe".split(",");
+capitals="Kabul,Tirana,Algiers,Andorra la Vella,Luanda,Saint John's,Buenos Aires,Yerevan,Canberra,Vienna,Baku,Nassau,Manama,Dhaka,Bridgetown,Minsk,Brussels,Belmopan,Porto-Novo,Thimphu,Sucre,Sarajevo,Gaborone,Brasilia,Bandar Seri Begawan,Sofia,Ouagadougou,Bujumbura,Phnom Penh,Yaounde,Ottawa,Praia,Bangui,N'Djamena,Santiago,Beijing,Bogota,Moroni,Brazzaville,Kinshasa,San Jose,Yamoussoukro,Zagreb,Havana,Nicosia,Prague,Copenhagen,Djibouti,Roseau,Santo Domingo,Dili,Quito,Cairo,San Salvador,Malabo,Asmara,Tallinn,Addis Ababa,Suva,Helsinki,Paris,Libreville,Banjul,Tbilisi,Berlin,Accra,Athens,Saint George's,Guatemala City,Conakry,Bissau,Georgetown,Port-au-Prince,Tegucigalpa,Budapest,Reykjavik,New Delhi,Jakarta,Tehran,Baghdad,Dublin,Jerusalem,Rome,Kingston,Tokyo,Amman,Astana,Nairobi,Tarawa Atoll,Pyongyang,Seoul,Pristina,Kuwait City,Bishkek,Vientiane,Riga,Beirut,Maseru,Monrovia,Tripoli,Vaduz,Vilnius,Luxembourg,Skopje,Antananarivo,Lilongwe,Kuala Lumpur,Male,Bamako,Valletta,Majuro,Nouakchott,Port Louis,Mexico City,Palikir,Chisinau,Monaco,Ulaanbaatar,Podgorica,Rabat,Maputo,Naypyidaw,Windhoek,Yaren,Kathmandu,Amsterdam,Wellington,Managua,Niamey,Abuja,Oslo,Muscat,Islamabad,Melekeok,Panama City,Port Moresby,Asuncion,Lima,Manila,Warsaw,Lisbon,Doha,Bucharest,Moscow,Kigali,Basseterre,Castries,Kingstown,Apia,San Marino,Sao Tome,Riyadh,Dakar,Belgrade,Victoria,Freetown,Singapore,Bratislava,Ljubljana,Honiara,Mogadishu,Pretoria /<br/>Cape Town /<br/>Bloemfontein,Juba,Madrid,Kotte,Khartoum,Paramaribo,Mbabane,Stockholm,Bern,Damascus,Taipei,Dushanbe,Dodoma,Bangkok,Lome,Nuku'alofa,Port-of-Spain,Tunis,Ankara,Ashgabat,Funafuti,Kampala,Kiev,Abu Dhabi,London,Washington D.C.,Montevideo,Tashkent,Port-Vila,Vatican City,Caracas,Hanoi,Sanaa,Lusaka,Harare".split(",");
+
+
+function reset(){
+  var a="",b=[],i,j,set=[];
+  correct=[0,0,0,0,0,0]; hovering=false;
+  
+  for (i=1;i<=6;i++) {
+    do {j=Math.floor(Math.random()*countries.length);} while (set.indexOf(j)!=-1)
+    set[i]=j;
+    a+='<div class="dragclass" id="A'+i+'" onmouseover="hover(this);" onmouseout="hovering=false;drop(this);"><div class="drag">'+capitals[set[i]]+'</div></div> ';
+    b[i]='<div class="dragclass" id="B'+i+'" onmouseover="hover(this);" onmouseout="hovering=false;drop(this);"><div class="drag"><div class="thumb" style="background-position:'+set[i]*-80+'px 0px;"></div>'+countries[set[i]]+'</div></div> ';
+  }
+  shuffle(b);
+  
+  document.getElementById('output2').innerHTML="";
+  document.getElementById('output').innerHTML="<div class='out'>"+a+"</div><br/><br/><br/><div class='out'>"+b.join("")+"</div>";
+}
+
+function shuffle(list) {
+  var i, j, t;
+  for (i = 1; i < list.length; i++) {
+    do j = Math.floor(Math.random()*(1+i)); while (j==i)
+    t = list[i];
+    list[i] = list[j];
+    list[j] = t;
+  }
+}
+
+if (window.opera){
+  document.write("<input type='hidden' id='Q' value=' '>");
+}
+
+var n = 500,
+    dragok = false, hovering=false,
+    y,x,d,dy,dx;
+
+function move(e){
+  if (!e) e = window.event;
+  if (dragok){
+    d.style.left = dx + e.clientX - x + "px";
+    d.style.top  = dy + e.clientY - y + "px";
+    return false;
+  }
+}
+
+document.onmousedown = function(e){
+  if (!e) e = window.event;
+  var temp = (typeof e.target != "undefined")?e.target:e.srcElement;
+  if (temp.tagName != "HTML"|"BODY" && temp.className != "dragclass"){
+    temp = (typeof temp.parentNode != "undefined")?temp.parentNode:temp.parentElement;
+  }
+  if (temp.className=='drag') temp=temp.parentNode;
+  if (temp.className == "dragclass"){
+    if (window.opera){
+      document.getElementById("Q").focus();
+    }
+    dragok = true;
+    temp.style.zIndex = -1; //n++;
+    d = temp;
+    dx = parseInt(temp.style.left+0);
+    dy = parseInt(temp.style.top+0);
+    x = e.clientX;
+    y = e.clientY;
+    document.onmousemove = move;
+    return false;
+  }  
+}
+
+
+document.onmouseup = function() {
+  dragok = false;  
+  document.onmousemove = null;
+  
+  if (d) {
+    d.style.zIndex = 500;
+    d.style.left = "";
+    d.style.top  = "";
+  
+    if (hovering){
+      drop(hovering);
+      i=parseInt(d.id.substr(1))-1;
+      if (i==parseInt(hovering.id.substr(1))-1) {
+        d.style.visibility="hidden";
+        hovering.style.visibility="hidden";
+        document.getElementById('output2').innerHTML+="<span>"+d.innerHTML+"="+hovering.innerHTML+"</span> ";
+        correct[i]=1;
+        if (correct.indexOf(0)==-1) reset();
+      }
+    }
+  
+  }
+}
+
+function hover(obj){
+  if (dragok && d!=obj) {
+    hovering=obj;
+    obj.style.backgroundColor='#ffff66';
+    obj.style.opacity=0.5;
+    obj.style.border="2px dashed";
+    obj.style.padding="13px";
+  }
+
+}
+
+function drop(obj){
+  obj.style.backgroundColor='';
+  obj.style.opacity=1;
+  obj.style.border="";
+  obj.style.padding="";
+}
+
+
+reset();
+</script>
+
+</body>
+</html>

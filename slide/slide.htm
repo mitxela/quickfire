@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html><head><title></title>
+<style type="text/css">
+body{
+text-align:center;
+background-color:#C9B37F;
+
+
+/* Gradient Background */ 
+background-image: -ms-radial-gradient(center, circle farthest-corner, #C9B37F 0%, #66522D 100%);
+background-image: -moz-radial-gradient(center, circle farthest-corner, #C9B37F 0%, #66522D 100%);
+background-image: -o-radial-gradient(center, circle farthest-corner, #C9B37F 0%, #66522D 100%);
+background-image: -webkit-gradient(radial, center center, 0, center center, 506, color-stop(0, #C9B37F), color-stop(1, #66522D));
+background-image: -webkit-radial-gradient(center, circle farthest-corner, #C9B37F 0%, #66522D 100%);
+background-image: radial-gradient(circle farthest-corner at center, #C9B37F 0%, #66522D 100%);
+}
+canvas {
+width:35em;
+}
+</style>
+</head><body>
+<br/><br/><br/>
+<canvas id='slide' width='346' height='346'></canvas>
+<script type="text/javascript">
+num=parseInt(window.location.search.substring(1)); if (isNaN(num)) num=1;
+context = document.getElementById('slide').getContext('2d');
+frame = new Image(); frame.src = 'Frame.png';
+arrows = new Image(); arrows.src='Arrows.png';
+img = new Image(); img.src='SlidePuzzle'+num+'.png';
+tiles=[];
+anim=false; over=false;
+
+img.onload=function(){
+
+  for (i=0;i<16;i++) tiles[i]=i;
+  
+  //Shuffle tiles. For the puzzle to be solvable, we must perform an even number of swaps.
+   //3 (top right) is the blank tile.
+  var a,b,c;
+  for (i=0;i<30;i++) {
+    do {a=Math.floor(Math.random()*16);} while (a==3)
+    do {b=Math.floor(Math.random()*16);} while (b==3 || b==a)
+    c=tiles[a]; tiles[a]=tiles[b]; tiles[b]=c;
+  }
+  
+  draw(-1);
+}
+
+document.onkeydown = function(e) {
+  if (over) window.location="?"+(1+num%16);
+  if (anim) return;
+  e = e || window.event;
+  n=tiles.indexOf(3);
+  
+  switch(e.keyCode) {
+    case 37://left
+      if (n%4 <3) draw(n,n+1,0,-1,0);
+    break;
+    case 38://up
+      if (n < 12) draw(n,n+4,0,0,-1);
+    break;
+    case 39://right
+     if (n%4 >0) draw(n,n-1,0,1,0);
+    break;
+    case 40://down
+      if (n >3) draw(n,n-4,0,0,1);
+    break;
+  }
+  draw(-1);
+  
+}
+
+function draw(a,b,c,d,e){
+  context.drawImage(frame,0,0);
+  if (a==-1) context.drawImage(arrows,44,44);
+  
+  for (i=0;i<16;i++)
+    if (i!=a && i!=b && tiles[i]!=3)
+      context.drawImage(img,
+        (tiles[i]%4)*64,Math.floor(tiles[i]/4)*64,64,64,
+        (i%4)*65+44,Math.floor(i/4)*65+44,64,64);
+  
+  if (a==-1) return;
+  
+  anim=true;
+  context.drawImage(img,
+    (tiles[b]%4)*64,Math.floor(tiles[b]/4)*64,64,64,
+    (b%4)*65+44+c*d,Math.floor(b/4)*65+44+c*e,64,64);
+  
+  if (c<65) setTimeout(function(){draw(a,b,c+5,d,e);},15);
+  else {
+    tiles[a]=tiles[b]; tiles[b]=3; 
+    anim=false;  
+    if (!solved()) draw(-1);
+  }
+}
+
+function solved(){
+  for (i=0;i<16;i++) if (i!=3) if (tiles[i]!=i) return false;
+  anim=true;
+  context.globalAlpha=0.05;
+  id=setInterval(function(){context.drawImage(img,192,0,64,64,239,44,64,64);context.globalAlpha+=0.05;},40);
+  setTimeout(function(){clearTimeout(id);over=true;},3000);
+  return true;
+}
+
+</script>
+</body>
+</html>

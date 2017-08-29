@@ -1,0 +1,68 @@
+<html>
+<head><title></title>
+<style>
+div {
+display:inline-block;font-family:sans-serif;
+border:2px solid #999; background-color:#ddd;
+padding:5px;margin:5px;
+cursor:pointer;
+}
+.b{
+text-align:center;
+width:800px;border:0px;
+background-color:#eee;
+cursor:default;
+}
+</style>
+</head><body>
+<span id='t'>4:00</span><br>
+<div class='b'>
+<script>
+
+set=new Array(100);
+count=1; time=240;
+
+
+for (var i=1;i<=100;i++) {
+  do s=Math.floor(Math.random()*100+1); while (set.indexOf(s)!=-1)
+  set[i]=s;
+  document.write("<div id='b"+s+"' onclick='check("+s+",this)'>"+s+"</div> ");
+}
+timer=setInterval(function(){
+    document.getElementById("t").innerHTML=Math.floor(--time/60)+":"+(time%60+100+"").slice(-2);
+    if (time==0) lose();
+},1000);
+
+
+function check(n,obj){
+  if (n==count) {
+    count++;
+    obj.style.backgroundColor="#9d6";
+    obj.style.borderColor="#493";
+    obj.style.cursor="default";
+    obj.onclick=function(){};
+    if (count==100) {
+      alert("Done!");
+    }
+  } else {
+    lose();
+    obj.style.color="#f00";
+  }
+}
+
+function lose(){
+  clearInterval(timer); 
+  var obj,i;
+  for (i=count;i<=100;i++) {
+    obj=document.getElementById('b'+i);
+    obj.onclick=function(){};
+    obj.style.color="#777";
+    obj.style.cursor="default";
+  }
+}
+
+</script>
+</div>
+
+</body>
+</html>

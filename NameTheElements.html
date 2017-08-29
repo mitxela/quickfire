@@ -1,0 +1,72 @@
+<html>
+<head><title></title>
+<style>
+table{margin-left: auto; margin-right: auto;}
+td{text-align:center;width:5.5%;font-size:20pt;padding:1px;}
+span{padding:10px;}
+</style>
+</head><body>
+<div style='text-align:center;'>
+
+<input type='text' onkeyup='check(this.value,this);' />
+<span id='count'>0 / 118</span>
+ 
+<button onclick='giveup();'>Give up</button>
+
+<div id='output'></div>
+</div>
+
+<script>
+names="Hydrogen,Helium,Lithium,Beryllium,Boron,Carbon,Nitrogen,Oxygen,Fluorine,Neon,Sodium,Magnesium,Aluminium,Silicon,Phosphorus,Sulfur,Chlorine,Argon,Potassium,Calcium,Scandium,Titanium,Vanadium,Chromium,Manganese,Iron,Cobalt,Nickel,Copper,Zinc,Gallium,Germanium,Arsenic,Selenium,Bromine,Krypton,Rubidium,Strontium,Yttrium,Zirconium,Niobium,Molybdenum,Technetium,Ruthenium,Rhodium,Palladium,Silver,Cadmium,Indium,Tin,Antimony,Tellurium,Iodine,Xenon,Caesium,Barium,Hafnium,Tantalum,Tungsten,Rhenium,Osmium,Iridium,Platinum,Gold,Mercury,Thallium,Lead,Bismuth,Polonium,Astatine,Radon,Francium,Radium,Rutherfordium,Dubnium,Seaborgium,Bohrium,Hassium,Meitnerium,Darmstadtium,Roentgenium,Copernicium,Ununtrium,Flerovium,Ununpentium,Livermorium,Ununseptium,Ununoctium,Lanthanum,Cerium,Praseodymium,Neodymium,Promethium,Samarium,Europium,Gadolinium,Terbium,Dysprosium,Holmium,Erbium,Thulium,Ytterbium,Lutetium,Actinium,Thorium,Protactinium,Uranium,Neptunium,Plutonium,Americium,Curium,Berkelium,Californium,Einsteinium,Fermium,Mendelevium,Nobelium,Lawrencium".split(",");
+symbols="H,He,Li,Be,B,C,N,O,F,Ne,Na,Mg,Al,Si,P,S,Cl,Ar,K,Ca,Sc,Ti,V,Cr,Mn,Fe,Co,Ni,Cu,Zn,Ga,Ge,As,Se,Br,Kr,Rb,Sr,Y,Zr,Nb,Mo,Tc,Ru,Rh,Pd,Ag,Cd,In,Sn,Sb,Te,I,Xe,Cs,Ba,Hf,Ta,W,Re,Os,Ir,Pt,Au,Hg,Tl,Pb,Bi,Po,At,Rn,Fr,Ra,Rf,Db,Sg,Bh,Hs,Mt,Ds,Rg,Cn,Uut,Fl,Uup,Lv,Uus,Uuo,La,Ce,Pr,Nd,Pm,Sm,Eu,Gd,Tb,Dy,Ho,Er,Tm,Yb,Lu,Ac,Th,Pa,U,Np,Pu,Am,Cm,Bk,Cf,Es,Fm,Md,No,Lr".split(",");
+colours="a0ffa0,c0ffff,ff6666,ffdead,cccc99,a0ffa0,a0ffa0,a0ffa0,ffff99,c0ffff,ff6666,ffdead,cccccc,cccc99,a0ffa0,a0ffa0,ffff99,c0ffff,ff6666,ffdead,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,cccccc,cccc99,cccc99,a0ffa0,ffff99,c0ffff,ff6666,ffdead,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,cccccc,cccccc,cccc99,cccc99,ffff99,c0ffff,ff6666,ffdead,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,cccccc,cccccc,cccccc,cccccc,ffff99,c0ffff,ff6666,ffdead,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,e8e8e8,e8e8e8,e8e8e8,ffc0c0,e8e8e8,e8e8e8,e8e8e8,e8e8e8,e8e8e8,e8e8e8,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc".split(",");
+time= new Date().getTime();
+
+var a="<table style='width:930px;'><tr>",i=0;
+for (var key in symbols) {
+  a += "<td style='background-color:#"+colours[key]
+  +"'><div id='"+symbols[key]+"' style='visibility:hidden;'>"
+  +symbols[key]+"</div></td>";
+  switch (symbols[key]) {
+    case "H": i+=16;a+="<td colspan='16'></td>";break;
+    case "Uuo": i++;a+="</tr><tr><td style='height:30px;'></td></tr><tr><td></td>"; break;
+    case "Be": case "Mg": i+=10;a+="<td colspan='10'></td>"; break;
+    case "Ba": case "Ra": i++;a+="<td></td>"; break;
+    case "Lu": i+=3;a+="<td colspan='2'></td></tr><tr><td></td>"; break;
+    case "Lr": i+=2;a+="<td colspan='2'></td>"; break;
+  }
+  if (++i % 18 == 0) a+="</tr><tr>";
+}
+document.getElementById('output').innerHTML=a+"<tr/><table>";
+
+
+function check(n,obj){
+  var i=names.indexOf(n.charAt(0).toUpperCase() + n.slice(1).toLowerCase());
+  
+  if (i!=-1) {
+    document.getElementById(symbols[i]).style.visibility="visible";
+    obj.value="";
+    names.splice(i,1);
+    symbols.splice(i,1);
+    document.getElementById('count').innerHTML=118-names.length+" / 118";
+    if (names.length==0) alert("Done! Took "+timeString((new Date().getTime())-time));
+  }
+}
+
+function giveup(){
+  for (i in names) {
+    document.getElementById(symbols[i]).style.visibility="visible";
+    document.getElementById(symbols[i]).style.color="red";
+  }  
+  document.getElementById('output').innerHTML+="<br/><br/><br/>"+names.join(", ");
+  check=giveup=function(){};
+}
+
+function timeString(ms) {
+  var s=Math.floor((ms/1000)%60),
+      m=Math.floor(ms/60000);
+  return m+(m==1?"minute ":" minutes ")+s+(s==1?" second.":" seconds.");
+}
+</script>
+</body>
+</html>

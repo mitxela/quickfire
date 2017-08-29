@@ -1,0 +1,52 @@
+<html><head></head><body>
+<script type='text/javascript'>
+var a="",b="",z=-1;
+var c="red blue green yellow brown orange cyan pink magenta grey purple black".split(" ");
+function newAdd(ans) {
+  if (ans==b) {
+  a=c[Math.floor(Math.random()*c.length)];
+  do {b=c[Math.floor(Math.random()*c.length)];} while (a==b)
+  document.getElementById("out").innerHTML=a;
+  document.getElementById("out").style.color=b;
+  document.getElementById("count").innerHTML=++z;
+  return "";} else return ans;
+}
+
+function timer(sec) {
+document.getElementById("t").innerHTML=sec;
+if (sec==0) {
+ alert("Over");
+ document.getElementById("s").disabled=false;
+ document.getElementById("scores").innerHTML+=z+"<br>";
+  var s=document.getElementById("scores").innerHTML.split("<br>");
+  var average = eval(s.join('+')+"0") / (s.length-1);
+  document.getElementById("averages").innerHTML="Average: "+Math.round(average*100)/100+"<br>AvgTime: "+(Math.round(3000/average)/100)+"s";
+ }else
+setTimeout("timer("+(sec-1)+")",1000);
+}
+
+
+
+
+</script>
+<div id='averages' style='font-size:20pt;float:right;' >
+</div>
+<div id='scores' style='font-size:20pt;float:right;clear:right;' ></div>
+<input type='button' size='30' value="Start" id="s" onclick='z=-1;newAdd(b);timer(30);document.getElementById("input").focus();this.disabled="disabled";'>
+<div id='out' style='font-size:50pt;font-weight:bold;font-family:sans-serif'>
+</div>
+<input type='text' size='30' id='input' onkeyup='this.value=newAdd(this.value);'>
+<br><br><div style="width:300px;font-size:20pt;">
+<script type="text/javascript">
+for (i=0;i<c.length;i++)
+  document.write("<a href='#' onclick='if(newAdd(\""+c[i]+"\")!=\"\") document.getElementById(\"count\").innerHTML=--z'>"+c[i]+"</a> ");
+</script></div>
+<br><br>
+<div id='count' style='font-size:20pt;'>
+</div>
+<div id='t' style='font-size:20pt;'>
+</div>
+
+
+
+</body></html>

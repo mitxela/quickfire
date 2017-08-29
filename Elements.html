@@ -1,0 +1,88 @@
+<style>
+table{margin-left: auto; margin-right: auto;}
+td{text-align:center;width:5.5%;font-size:20pt;padding:1px;}
+td:hover{border:1px solid;padding:0px;}
+</style>
+<div style='text-align:center;'>
+
+<div id='display' style='font-size:20pt;'></div>
+<div id='input'></div>
+
+<br/><br/>
+<select onchange="eval('elements='+this.value);reset();" id='sel'>
+  <option value="symbols">All Elements</option>
+  <option value="singleletter">Single Letter Symbol</option>
+  <option value="nonintuitive">Non-intuitive Symbol</option>
+  <option value="sblock">s-block</option>
+  <option value="pblock">p-block</option>
+  <option value="dblock">d-block</option>
+  <option value="fblock">f-block</option>
+</select> 
+<input type='checkbox' checked='checked' id='ss' onchange='reset();'/><label for='ss'>Show symbols</label>
+<input type='checkbox' checked='checked' id='st' onchange='reset();'/><label for='st'>Show tooltips</label>
+</div>
+
+<script>
+
+names="Hydrogen,Helium,Lithium,Beryllium,Boron,Carbon,Nitrogen,Oxygen,Fluorine,Neon,Sodium,Magnesium,Aluminium,Silicon,Phosphorus,Sulfur,Chlorine,Argon,Potassium,Calcium,Scandium,Titanium,Vanadium,Chromium,Manganese,Iron,Cobalt,Nickel,Copper,Zinc,Gallium,Germanium,Arsenic,Selenium,Bromine,Krypton,Rubidium,Strontium,Yttrium,Zirconium,Niobium,Molybdenum,Technetium,Ruthenium,Rhodium,Palladium,Silver,Cadmium,Indium,Tin,Antimony,Tellurium,Iodine,Xenon,Caesium,Barium,Hafnium,Tantalum,Tungsten,Rhenium,Osmium,Iridium,Platinum,Gold,Mercury,Thallium,Lead,Bismuth,Polonium,Astatine,Radon,Francium,Radium,Rutherfordium,Dubnium,Seaborgium,Bohrium,Hassium,Meitnerium,Darmstadtium,Roentgenium,Copernicium,Ununtrium,Flerovium,Ununpentium,Livermorium,Ununseptium,Ununoctium,Lanthanum,Cerium,Praseodymium,Neodymium,Promethium,Samarium,Europium,Gadolinium,Terbium,Dysprosium,Holmium,Erbium,Thulium,Ytterbium,Lutetium,Actinium,Thorium,Protactinium,Uranium,Neptunium,Plutonium,Americium,Curium,Berkelium,Californium,Einsteinium,Fermium,Mendelevium,Nobelium,Lawrencium".split(",");
+symbols="H,He,Li,Be,B,C,N,O,F,Ne,Na,Mg,Al,Si,P,S,Cl,Ar,K,Ca,Sc,Ti,V,Cr,Mn,Fe,Co,Ni,Cu,Zn,Ga,Ge,As,Se,Br,Kr,Rb,Sr,Y,Zr,Nb,Mo,Tc,Ru,Rh,Pd,Ag,Cd,In,Sn,Sb,Te,I,Xe,Cs,Ba,Hf,Ta,W,Re,Os,Ir,Pt,Au,Hg,Tl,Pb,Bi,Po,At,Rn,Fr,Ra,Rf,Db,Sg,Bh,Hs,Mt,Ds,Rg,Cn,Uut,Fl,Uup,Lv,Uus,Uuo,La,Ce,Pr,Nd,Pm,Sm,Eu,Gd,Tb,Dy,Ho,Er,Tm,Yb,Lu,Ac,Th,Pa,U,Np,Pu,Am,Cm,Bk,Cf,Es,Fm,Md,No,Lr".split(",");
+colours="a0ffa0,c0ffff,ff6666,ffdead,cccc99,a0ffa0,a0ffa0,a0ffa0,ffff99,c0ffff,ff6666,ffdead,cccccc,cccc99,a0ffa0,a0ffa0,ffff99,c0ffff,ff6666,ffdead,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,cccccc,cccc99,cccc99,a0ffa0,ffff99,c0ffff,ff6666,ffdead,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,cccccc,cccccc,cccc99,cccc99,ffff99,c0ffff,ff6666,ffdead,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,cccccc,cccccc,cccccc,cccccc,ffff99,c0ffff,ff6666,ffdead,ffc0c0,ffc0c0,ffc0c0,ffc0c0,ffc0c0,e8e8e8,e8e8e8,e8e8e8,ffc0c0,e8e8e8,e8e8e8,e8e8e8,e8e8e8,e8e8e8,e8e8e8,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ffbfff,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc,ff99cc".split(",");
+
+nonintuitive="Na,K,Fe,Ag,Sn,Sb,W,Au,Hg,Pb".split(",");
+singleletter="H,B,C,N,O,F,P,S,V,Y,I,U".split(",");
+dblock="Sc,Ti,V,Cr,Mn,Fe,Co,Ni,Cu,Zn,Y,Zr,Nb,Mo,Tc,Ru,Rh,Pd,Ag,Cd,Hf,Ta,W,Re,Os,Ir,Pt,Au,Hg,Rf,Db,Sg,Bh,Hs,Mt,Ds,Rg,Cn,Lu,Lr".split(",");
+fblock="La,Ce,Pr,Nd,Pm,Sm,Eu,Gd,Tb,Dy,Ho,Er,Tm,Yb,Ac,Th,Pa,U,Np,Pu,Am,Cm,Bk,Cf,Es,Fm,Md,No".split(",");
+pblock="B,C,N,O,F,Ne,Al,Si,P,S,Cl,Ar,Ga,Ge,As,Se,Br,Kr,In,Sn,Sb,Te,I,Xe,Tl,Pb,Bi,Po,At,Rn,Uut,Fl,Uup,Lv,Uus,Uuo".split(",");
+sblock="H,He,Li,Be,Na,Mg,K,Ca,Rb,Sr,Cs,Ba,Fr,Ra".split(",");
+
+elements=symbols;
+
+document.getElementById('sel').onchange();
+reset();
+function reset(){
+  var a="<table style='width:930px;'><tr>",i=0;
+  do i=Math.floor(Math.random()*names.length); while (elements.indexOf(symbols[i])==-1)
+  document.getElementById('display').innerHTML=names[i];
+  i=0;
+  ss=document.getElementById('ss').checked;
+  st=document.getElementById('st').checked;
+  
+  for (var key in symbols) {
+    a += "<td style='background-color:#"+colours[key]
+      +"' onmousedown='check(this,\""+names[key]
+      +"\");' title='"+(st?names[key]:"")+"' id='"+symbols[key]+"'>"
+      +(ss?symbols[key]:"<br/>")+"</td>";
+    switch (symbols[key]) {
+      case "H": i+=16;a+="<td colspan='16'></td>";break;
+      case "Uuo": i++;a+="</tr><tr><td style='height:30px;'></td></tr><tr><td></td>"; break;
+      case "Be": case "Mg": i+=10;a+="<td colspan='10'></td>"; break;
+      case "Ba": case "Ra": i++;a+="<td></td>"; break;
+      case "Lu": i+=3;a+="<td colspan='2'></td></tr><tr><td></td>"; break;
+      case "Lr": i+=2;a+="<td colspan='2'></td>"; break;
+    }
+    if (++i % 18 == 0) a+="</tr><tr>";
+  }
+  a+="<tr/><table>";
+  document.getElementById('input').innerHTML=a;
+}
+
+function check(obj,n){
+  if (document.getElementById('display').innerHTML==n) {
+    document.getElementById('display').innerHTML+=" : Correct!";
+    for (var key in symbols)
+      setOpacity(30,document.getElementById(symbols[key]));
+    
+    setOpacity(100,obj);
+    obj.onmousedown="";
+    setTimeout("reset();",1500);
+  } else setOpacity(30,obj);
+}
+
+function setOpacity(opacity, obj) {
+  opacity = (opacity == 100)?99.999:opacity;
+  obj.style.filter = "alpha(opacity:"+opacity+")";
+  obj.style.KHTMLOpacity = opacity/100;
+  obj.style.MozOpacity = opacity/100;
+  obj.style.opacity = opacity/100;
+}
+</script>

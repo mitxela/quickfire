@@ -1,0 +1,68 @@
+<!DOCTYPE html><html><head><title>Morse Alphabet</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+</head><body>
+
+<style>
+body{line-height:50px;}
+div{
+  width:140px;height:20px;
+  background-image: url(data:image/png;base64,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);
+}
+#o {display:none;}
+</style>
+
+<button onclick='o.style.visibility=i.style.visibility=(i.style.visibility=="hidden"?"":"hidden")'>Toggle visual</button>
+<button onclick='setLetter(L)'>Replay</button>
+<div id='i'></div>
+<input type='text' id='a' onkeyup='check(this)'>
+
+<br><span id='p'></span><div id='o'></div>
+
+
+<br><span id='s'></span>
+
+
+<audio preload id='ogg'>
+  <source src='A_through_Z_in_Morse_code.ogg'>
+</audio>
+
+<script>
+document.onkeydown=function(){a.focus();}
+audio=document.getElementById('ogg');
+stopTime=0;
+
+letterTimes=[[1.0,1.8],[2.0,3.0],[3.8,4.8],[5.6,6.6],[6.7,7.2],[7.5,8.9],[9.2,10.5],[11.0,12.0],[12.0,13.0],[13.1,14.8],[15.2,16.4],[16.8,18.0],[18.5,19.5],[19.8,20.7],[21.0,22.3],[22.8,24.0],[24.5,26.0],[26.7,27.7],[28.0,29.0],[29.3,30.0],[30.1,31.2],[31.5,32.9],[33.1,34.5],[34.8,36.0],[36.4,38.1],[38.5,39.9]];
+
+function setLetter(replay){
+  L= replay&&replay.charCodeAt(0)-65 ||Math.floor(Math.random()*26);
+  i.style.backgroundPosition="0px "+(-20*L)+"px";
+  
+  audio.currentTime=letterTimes[L][0];
+  stopTime=letterTimes[L][1];
+  audio.play();
+  
+  L=String.fromCharCode(65+L);
+  
+}
+
+function check(obj){
+  obj.value=obj.value.substr(-1);
+  if (obj.value.toUpperCase()==L){
+    p.innerHTML=L+' ';
+    o.style.backgroundPosition=i.style.backgroundPosition;
+    o.style.display="inline-block";
+    s.innerHTML+=".";
+    setLetter();
+    obj.value="";
+  } else if(obj.value) s.innerHTML="";
+}
+
+audio.addEventListener('timeupdate', function(){
+  if (audio.currentTime>stopTime) audio.pause();
+},false);
+
+audio.addEventListener('canplaythrough',function(){ window.L || setLetter(); },false);
+
+</script>
+
+</body></html>

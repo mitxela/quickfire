@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head><title>Where in the World</title> <meta charset='utf-8'>
+<style>
+img {position:relative;left:0px;top:0px;}
+#thumb {width:80px;height:64px;background-image:url(FlagStrip.png);float:left; margin-left:10px;}
+h1 {float:left; margin-left:20px; margin-right:20px;}
+.point {position:absolute; background-color:red; width:1px; height:1px;  z-index:5}
+#vpoint{height:720px; left:10px; top:0px;}
+#hpoint{width:1440px; left:0px; top:10px;}
+#correct{position:fixed; left:50%; margin-left:-40px; top:20px;font-size:48pt;z-index:15;color:red; display:none;}
+</style>
+
+</head>
+<body>
+
+<div id=correct>Correct!</div>
+
+<div style='position:fixed;left:10px;top:10px;z-index:10;background-color:white;'>
+<div id=thumb></div>
+<h1 id=name></h1>
+</div>
+<br><br><br><br><br>
+
+<div style='position:relative;'>
+<div class=point id=vpoint></div>
+<div class=point id=hpoint></div>
+<img src=WorldMap.png>
+</div>
+<script>
+countries="Afghanistan,Albania,Algeria,Andorra,Angola,Antigua and Barbuda,Argentina,Armenia,Australia,Austria,Azerbaijan,The Bahamas,Bahrain,Bangladesh,Barbados,Belarus,Belgium,Belize,Benin,Bhutan,Bolivia,Bosnia and Herzegovina,Botswana,Brazil,Brunei,Bulgaria,Burkina Faso,Burundi,Cambodia,Cameroon,Canada,Cape Verde,Central African Republic,Chad,Chile,China,Colombia,Comoros,Republic of the Congo,Democratic Republic of the Congo,Costa Rica,Cote d'Ivoire,Croatia,Cuba,Cyprus,Czech Republic,Denmark,Djibouti,Dominica,Dominican Republic,East Timor,Ecuador,Egypt,El Salvador,Equatorial Guinea,Eritrea,Estonia,Ethiopia,Fiji,Finland,France,Gabon,The Gambia,Georgia,Germany,Ghana,Greece,Grenada,Guatemala,Guinea,Guinea-Bissau,Guyana,Haiti,Honduras,Hungary,Iceland,India,Indonesia,Iran,Iraq,Ireland,Israel,Italy,Jamaica,Japan,Jordan,Kazakhstan,Kenya,Kiribati,North Korea,South Korea,Kosovo,Kuwait,Kyrgyzstan,Laos,Latvia,Lebanon,Lesotho,Liberia,Libya,Liechtenstein,Lithuania,Luxembourg,Macedonia,Madagascar,Malawi,Malaysia,Maldives,Mali,Malta,Marshall Islands,Mauritania,Mauritius,Mexico,Federated States of Micronesia,Moldova,Monaco,Mongolia,Montenegro,Morocco,Mozambique,Myanmar (Burma),Namibia,Nauru,Nepal,Netherlands,New Zealand,Nicaragua,Niger,Nigeria,Norway,Oman,Pakistan,Palau,Panama,Papua New Guinea,Paraguay,Peru,Philippines,Poland,Portugal,Qatar,Romania,Russia,Rwanda,Saint Kitts and Nevis,Saint Lucia,Saint Vincent and the Grenadines,Samoa,San Marino,Sao Tome and Principe,Saudi Arabia,Senegal,Serbia,Seychelles,Sierra Leone,Singapore,Slovakia,Slovenia,Solomon Islands,Somalia,South Africa,South Sudan,Spain,Sri Lanka,Sudan,Suriname,Swaziland,Sweden,Switzerland,Syria,Taiwan,Tajikistan,Tanzania,Thailand,Togo,Tonga,Trinidad and Tobago,Tunisia,Turkey,Turkmenistan,Tuvalu,Uganda,Ukraine,United Arab Emirates,United Kingdom,United States of America,Uruguay,Uzbekistan,Vanuatu,Vatican City,Venezuela,Vietnam,Yemen,Zambia,Zimbabwe".split(",");
+borders=[[958,204,1009,244],[795,190,808,208],[684,209,767,287],[716,180,733,198],[763,380,815,435],[461,280,479,304],[428,441,497,585],[889,188,914,208],[1172,402,1333,536],[758,163,789,177],[900,186,928,205],[399,246,429,279],[919,252,932,265],[1069,253,1094,280],[474,298,490,316],[810,131,856,160],[728,147,749,165],[360,282,371,298],[722,311,736,339],[1074,245,1091,256],[437,398,493,454],[776,172,803,195],[790,420,840,478],[428,328,581,516],[1162,326,1192,354],[798,171,840,205],[692,292,736,324],[828,362,848,382],[1124,296,1155,326],[752,304,788,358],[152,5,500,178],[606,280,635,309],[773,312,832,354],[770,258,820,333],[416,421,450,583],[1003,145,1240,284],[401,303,454,380],[881,385,912,425],[763,342,793,383],[769,332,851,416],[370,309,390,334],[676,311,714,348],[773,168,801,194],[380,260,427,288],[843,211,863,227],[766,152,797,169],[749,127,772,148],[881,300,897,321],[461,288,485,310],[432,274,449,293],[1215,388,1234,405],[390,350,423,389],[819,231,869,273],[356,297,372,315],[753,347,769,363],[863,285,893,309],[810,115,834,131],[853,305,908,349],[1425,419,1440,442],[804,78,847,121],[702,156,751,191],[754,346,782,382],[648,298,670,316],[881,181,908,201],[744,140,778,173],[705,314,724,342],[800,193,834,223],[463,303,479,321],[350,286,368,308],[656,308,691,335],[647,304,670,324],[471,322,496,359],[416,273,436,294],[360,292,390,311],[782,161,812,180],[622,90,670,109],[989,220,1088,340],[1096,333,1287,401],[891,191,974,262],[871,205,917,251],[671,133,697,156],[853,219,867,241],[748,175,799,219],[396,279,420,297],[1231,178,1301,243],[857,224,880,247],[895,137,1080,216],[850,334,890,381],[1339,312,1440,381],[1216,189,1241,210],[1220,208,1242,226],[790,179,812,200],[903,234,920,252],[993,179,1043,211],[1118,268,1154,307],[801,125,836,143],[856,220,869,235],[824,469,840,489],[670,322,695,346],[757,225,822,284],[751,164,776,181],[799,131,830,148],[735,153,752,170],[796,184,816,206],[893,407,921,463],[851,398,864,430],[1117,327,1194,359],[1000,320,1024,356],[671,260,740,324],[770,209,786,226],[1340,258,1437,326],[646,252,702,304],[934,431,963,454],[251,235,373,298],[1245,301,1362,371],[820,159,847,183],[739,175,759,192],[1072,145,1201,196],[787,181,810,200],[664,218,715,253],[840,404,883,474],[1086,246,1121,330],[763,426,808,477],[1357,328,1439,413],[1040,237,1073,258],[733,141,750,159],[1383,490,1432,553],[363,297,390,320],[718,262,784,314],[728,298,778,351],[738,76,798,127],[926,262,961,298],[965,205,1030,266],[1280,280,1330,337],[384,310,413,340],[1283,355,1338,417],[467,434,507,475],[393,361,444,433],[1180,281,1234,346],[771,134,820,173],[677,187,697,217],[917,248,933,270],[799,162,836,189],[824,33,1437,216],[829,358,852,378],[458,279,483,309],[450,280,489,327],[459,288,492,329],[2,382,68,449],[761,173,782,195],[733,338,762,369],[861,231,941,306],[645,288,679,320],[785,170,815,200],[921,356,958,406],[660,310,684,340],[1126,339,1152,375],[782,152,812,178],[764,160,791,189],[1332,362,1379,424],[882,311,924,367],[781,446,855,509],[813,300,868,349],[689,179,729,219],[1035,319,1052,345],[808,268,875,327],[483,327,509,360],[833,451,856,479],[763,79,815,140],[738,161,767,182],[857,207,889,233],[1193,255,1212,277],[978,186,1023,220],[835,359,885,410],[1105,274,1142,341],[714,309,730,346],[0,417,67,486],[464,307,489,333],[744,203,774,246],[821,190,903,220],[927,185,987,224],[1393,364,1439,423],[835,341,861,371],[811,148,878,189],[920,246,951,275],[690,113,728,164],[210,160,485,271],[479,472,516,510],[939,169,1007,213],[1370,394,1413,456],[756,176,788,211],[422,307,485,364],[1125,261,1165,336],[882,276,937,314],[797,386,862,441],[818,414,855,456]];
+
+i=-1; vpoint=document.getElementById('vpoint'); hpoint=document.getElementById('hpoint');
+
+function reset(){
+  correct.style.display='none';
+  var a=i; while (a==i) i = Math.floor(Math.random()*countries.length);  
+  
+  document.getElementById('thumb').style.backgroundPosition=i*-80 +'px';
+  document.getElementById('name').innerHTML=countries[i];
+  
+  vpoint.style.left="-2000px";
+  hpoint.style.top="-2000px";
+  
+}
+
+document.onmousedown=function(e){
+  var x=e.layerX, y=e.layerY, t=e.target;
+
+  if (correct.style.display=='block' || (1!= e.which || e.button)) return;
+  
+  if ((t==hpoint && x>=borders[i][0] && x<=borders[i][2]) || (t==vpoint && y>=borders[i][1] && y<=borders[i][3])) return win();
+  if (t!=document.querySelector('img')) return false;
+  
+
+  if (x>=borders[i][0] && x<=borders[i][2] && y>=borders[i][1] && y<=borders[i][3]) win();
+  else {
+    vpoint.style.left=(borders[i][0]+borders[i][2])/2+'px';
+    hpoint.style.top=(borders[i][1]+borders[i][3])/2+'px';
+  }
+  
+  return false;
+}
+
+function win(){
+
+  correct.style.display='block';
+  animate(correct, 'opacity', 1, 0, '', 90, reset)
+
+  return false;
+}
+
+
+//mx CSS Animation
+(function(){
+  var a=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame||function(a){setTimeout(a,17)};
+  animate=function(b,c,d,e,f,g,h){return function i(){b.style[c]=d+f,d+=(e-d)/g,g--?a(i):h&&h(b)}(),function(){g=0}}
+})();
+
+
+
+reset();
+</script>
+</body>
+</html>

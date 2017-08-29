@@ -1,0 +1,89 @@
+<html>
+<head><title>Maps</title>
+<style type='text/css'>
+img{margin:20px;vertical-align:middle;}
+div{text-align:center;font-size:20pt;}
+button{font-weight:bold;}
+</style>
+</head>
+<body>
+
+<div>
+<select onchange="eval('maps='+this.value);reset();" id="sel">
+  <option value="worldMaps">World Maps</option>
+  <option value="allEurope">Europe Maps</option>
+  <option value="africaMaps">Africa Maps</option>
+  <option value="landlocked">Landlocked</option>
+  <option value="bigmaps">50 Biggest</option>
+  <option value="statesMaps">United States</option>
+</select>
+ <input type="text" id='in' onkeyup="check(this.value,-1);"/>
+</div>
+<br/>
+
+<div id='n'></div>
+<div id='m'></div>
+
+
+<script type='text/javascript'>
+//Does not include: Aruba,Christmas Island,Guam,Federated States of Micronesia,Curaçao,Sint Maarten,Palau,Qatar,Saint Kitts and Nevis,Saint Lucia,Saint Vincent and the Grenadines,Tibet
+worldMaps="Afghanistan,Albania,Algeria,American Samoa,Andorra,Angola,Anguilla,Antigua and Barbuda,Argentina,Armenia,Australia,Austria,Azerbaijan,Bahamas,Bahrain,Bangladesh,Barbados,Belarus,Belgium,Belize,Benin,Bermuda,Bhutan,Bolivia,Bosnia and Herzegovina,Botswana,Brazil,British Virgin Islands,Brunei,Bulgaria,Burkina Faso,Burundi,Cambodia,Cameroon,Canada,Cape Verde,Cayman Islands,Central African Republic,Chad,Chile,People's Republic of China,Colombia,Comoros,Cook Islands,Costa Rica,Croatia,Cuba,Cyprus,Czech Republic,Côte d'Ivoire,Democratic Republic of the Congo,Denmark,Djibouti,Dominica,Dominican Republic,Ecuador,Egypt,El Salvador,Equatorial Guinea,Eritrea,Estonia,Ethiopia,Falkland Islands,Faroe Islands,Fiji,Finland,France,French Polynesia,Gabon,Gambia,Georgia,Germany,Ghana,Gibraltar,Greece,Greenland,Grenada,Guatemala,Guinea,Guinea-Bissau,Guyana,Haiti,Honduras,Hong Kong,Hungary,Iceland,India,Indonesia,Iran,Iraq,Ireland,Israel,Italy,Jamaica,Japan,Jordan,Kazakhstan,Kenya,Kiribati,Kuwait,Kyrgyzstan,Laos,Latvia,Lebanon,Lesotho,Liberia,Libya,Liechtenstein,Lithuania,Luxembourg,Macau,Macedonia,Madagascar,Malawi,Malaysia,Maldives,Mali,Malta,Marshall Islands,Martinique,Mauritania,Mauritius,Mexico,Moldova,Monaco,Mongolia,Montserrat,Morocco,Mozambique,Burma (Myanmar),Namibia,Nauru,Nepal,Netherlands,New Zealand,Nicaragua,Niger,Nigeria,Niue,Norfolk Island,North Korea,Norway,Oman,Pakistan,Panama,Papua New Guinea,Paraguay,Peru,Philippines,Pitcairn Islands,Poland,Portugal,Puerto Rico,Republic of the Congo,Romania,Russian Federation,Rwanda,Saint-Pierre and Miquelon,Samoa,San Marino,São Tomé and Príncipe,Saudi Arabia,Senegal,Serbia,Montenegro,Seychelles,Sierra Leone,Singapore,Slovakia,Slovenia,Solomon Islands,Somalia,South Africa,South Georgia and the South Sandwich Islands,South Korea,Spain,Sri Lanka,Sudan,South Sudan,Suriname,Swaziland,Sweden,Switzerland,Syria,Republic of China,Tajikistan,Tanzania,Thailand,East Timor,Togo,Tonga,Trinidad and Tobago,Tunisia,Turkey,Turkmenistan,Turks and Caicos Islands,Tuvalu,United Arab Emirates,Uganda,United Kingdom,Ukraine,Uruguay,United States,United States Virgin Islands,Uzbekistan,Vanuatu,Vatican City,Venezuela,Vietnam,Wallis and Futuna,Yemen,Zambia,Zimbabwe,Western Sahara".split(",");
+statesMaps="Alabama,Alaska,Arizona,Arkansas,California,Colorado,Connecticut,Delaware,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massachusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,Rhode Island,South Carolina,South Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming".split(",");
+
+landlocked="Afghanistan,Andorra,Armenia,Austria,Azerbaijan,Belarus,Bhutan,Bolivia,Botswana,Burkina Faso,Burundi,Central African Republic,Chad,Czech Republic,Ethiopia,Hungary,Kazakhstan,Kyrgyzstan,Laos,Lesotho,Liechtenstein,Luxembourg,Macedonia,Malawi,Mali,Moldova,Mongolia,Nepal,Niger,Paraguay,Rwanda,San Marino,Serbia,Montenegro,Slovakia,South Sudan,Swaziland,Switzerland,Tajikistan,Turkmenistan,Uganda,Uzbekistan,Vatican City,Zambia,Zimbabwe".split(",");
+bigmaps="Russian Federation,Canada,United States,People's Republic of China,Brazil,Australia,India,Argentina,Kazakhstan,Algeria,Democratic Republic of the Congo,Greenland,Saudi Arabia,Mexico,Indonesia,Sudan,Libya,Iran,Mongolia,Peru,Chad,Niger,Angola,Mali,South Africa,Colombia,Ethiopia,Bolivia,Mauritania,Egypt,Tanzania,Nigeria,Venezuela,Pakistan,Namibia,Mozambique,Turkey,Chile,Zambia,Burma (Myanmar),Afghanistan,South Sudan,France,Somalia,Central African Republic,Ukraine,Madagascar,Botswana,Kenya,Yemen".split(",");
+allEurope="Germany,France,United Kingdom,Italy,Spain,Netherlands,Turkey,Switzerland,Poland,Belgium,Sweden,Norway,Austria,Denmark,Greece,Finland,Portugal,Ireland,Czech Republic,Romania,Ukraine,Hungary,Kazakhstan,Slovakia,Croatia,Belarus,Luxembourg,Azerbaijan,Slovenia,Bulgaria,Serbia,Montenegro,Lithuania,Latvia,Cyprus,Estonia,Bosnia and Herzegovina,Iceland,Albania,Georgia,Macedonia,Armenia,Malta,Moldova".split(",");
+africaMaps="Benin,Botswana,Burkina Faso,Burundi,Cameroon,Cape Verde,Central African Republic,Chad,Comoros,Côte d'Ivoire,Djibouti,Egypt,Equatorial Guinea,Eritrea,Ethiopia,Gabon,Gambia,Ghana,Guinea,Kenya,Lesotho,Liberia,Libya,Madagascar,Malawi,Mali,Mauritania,Mauritius,Morocco,Mozambique,Namibia,Niger,Nigeria,Republic of the Congo,Rwanda,São Tomé and Príncipe,Senegal,Seychelles,Sierra Leone,Somalia,South Africa,Sudan,South Sudan,Swaziland,Tanzania,Togo,Tunisia,Uganda,Zambia,Zimbabwe,Guinea-Bissau,Algeria,Angola,Western Sahara,Democratic Republic of the Congo".split(",");
+
+
+
+maps=worldMaps;
+
+document.getElementById('sel').onchange();
+reset();
+
+function reset(){
+  var set=new Array(8);
+  map=maps[Math.floor(Math.random()*maps.length)];
+  document.getElementById("m").innerHTML="<img style='visibility:hidden;' onload='fadeIn(this,0);' src=\"maps/"+(maps==statesMaps?"states/":"world/")+map.replace(/ /g,"_")+".png\" alt=''/>";
+  document.getElementById("n").innerHTML="";
+  set[Math.floor(Math.random()*set.length)]=map;
+  for (i=0;i<set.length;i++) {
+    if (typeof set[i] == "undefined") {
+      do {s=maps[Math.floor(Math.random()*maps.length)];} while (set.indexOf(s)!=-1 && set.length<=maps.length)
+      set[i]=s;
+    }
+    document.getElementById("n").innerHTML+="<button onclick='check(\""+set[i].replace("'","&#39;")+"\",this);'>"+set[i]+"</button> ";
+  }
+  fadeIn(document.getElementById("n"),0);
+}
+
+function check(m,b){
+  if (m.toLowerCase()==map.toLowerCase()) {
+    document.getElementById("n").innerHTML=map+" : Correct!";
+    setTimeout("reset();",1500)
+    document.getElementById('in').value="";
+    document.getElementById('in').focus();
+  } else if (b!=-1) b.style.visibility="hidden";
+}
+
+function fadeIn(obj,cur){
+  if (cur < 100) {
+    setOpacity(cur+4, obj);
+    setTimeout(function(){fadeIn(obj,cur+4);},40);
+  }
+  obj.style.visibility="visible";
+}
+function setOpacity(opacity, obj) {
+  opacity = (opacity == 100)?99.999:opacity;
+  obj.style.filter = "alpha(opacity:"+opacity+")";
+  obj.style.KHTMLOpacity = opacity/100;
+  obj.style.MozOpacity = opacity/100;
+  obj.style.opacity = opacity/100;
+}
+
+</script>
+
+
+</body>
+</html>

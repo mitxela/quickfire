@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><title>Braille Grade 1</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+</head><body>
+
+<style>
+body{line-height:50px;}
+div{
+  width:32px;height:48px;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA0oAAAAwCAMAAAAYVXrlAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAYUExURSsROv/roSN/zOSaRZPf/5dCAAAAAP///zeGvRUAAAJSSURBVHja7JzRdoMgEETRWvL/f9zT9qFRFFiWzaTHe1/XrDLJgJo5pAcATCAhAQBWAsBKAFgJAGpW+sw5r5VDLfUllQdb6or+z5x9vlVHP61+lv4R4/+z0kfO1WNN9e/T5rQN1wX9C9kOn2/V0U+rn6l/xPjT/uw51a+us/5j6sN5LXVF/2JSq+jmvX70m6+fpX/I+NPh7Jczian+6+DdpZjqgv4nM+D1T8F7/eg3XT9T/5DxH1eltTEr9NWvXd1XV/SfM6uin0o/S/+Q8cc8Ky2Ne83Fea8c0X/3VTTu9ZfgZyX08z0rece3+J6V5r+B2sbriv7FtLbZ6uin1c/SP2L8/K8EMAWsBICVALASAFYCAKwEoLeS5WVki+i4oyIOin5a/bz9vfr2W8kUJ+yRJTLuKIiDop9WP29/r74GK1nihF2mD4w7KuKg6KfVz9vfq2+/lUxxwr4ZJi7uKIiDop9WP29/r772VWkVz6rvGwdFP61+3v6vW5UC7vXzZqnb75XzNlwf6I9+Wv28/b36St/gBcYdFXFQ9NPq5+3v1Zf/lQCmgJUAsBIAVgLASgCAlQCw0rszc2+Hu9dH4rTPRO/O6ouzQp2pu7PevT4Qpy1+9pG7s/rirNBelGbtznr3+kictliUAndndQaHoMrU3VnvXh+I056scHG7szrjrNCzKq3UJ9RH4rR9q9IaVsdKPCu9YX1k99SdlYJ3Z114VuIN3n96g2eM0xbLUuDurMRZAcLASgBYCQArAWAlAMBKAFgJACsBYCUAwEoAL+NLgAEAznkrl1/GMG4AAAAASUVORK5CYII=);
+}
+#o {display:none;}
+</style>
+
+<div id='i'></div>
+<input type='text' id='a' onkeyup='check(this)'>
+
+<br><span id='p'></span><div id='o'></div>
+<br><span id='s'></span>
+<script>
+document.onkeydown=function(){a.focus();}
+
+function setLetter(){
+  L=Math.floor(Math.random()*26);
+  i.style.backgroundPosition=-32*L+"px";
+  L=String.fromCharCode(65+L);
+}
+
+function check(obj){
+  obj.value=obj.value.substr(-1);
+  if (obj.value.toUpperCase()==L){
+    p.innerHTML=L+' : ';
+    o.style.backgroundPosition=i.style.backgroundPosition;
+    o.style.display="inline-block";
+    s.innerHTML+=".";
+    setLetter();
+    obj.value="";
+  } else if(obj.value) s.innerHTML="";
+}
+
+setLetter();
+</script>
+
+</body></html>

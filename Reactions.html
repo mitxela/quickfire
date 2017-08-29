@@ -1,0 +1,47 @@
+<html><head>
+<script type='text/javascript'>
+var time=0,a=0, s=new Array();
+function st(){
+  document.getElementById('out').innerHTML="Ready...";
+  setTimeout("end();",Math.random()*5000+1000);
+  a=1;
+}
+
+function end() {if(a==1){
+  document.getElementById('out').style.backgroundColor="red";
+  document.getElementById('out').innerHTML="Press any key";
+  time= new Date().getTime();
+  a=2;
+}}
+
+document.onkeydown=function(){
+  document.getElementById('out').style.backgroundColor="";
+  if (a==0) return;
+  if (a==1) {
+    document.getElementById('out').innerHTML="Premature...";
+    s=new Array();
+  }
+  if (a==2) {
+    s.unshift((new Date().getTime())-time);
+    document.getElementById('out').innerHTML=s[0] +"ms";  
+    if (s[0]>5000) s.shift();
+  }
+  document.getElementById('score').innerHTML=s.join('<br/>');
+  if (s[0]) document.getElementById('average').innerHTML="Average: "+Math.round(10*eval(s.join('+')) / s.length)/10;
+  a=0; setTimeout("st();",2000);
+}
+
+
+
+</script>
+</head><body onload="st();">
+
+
+<div id='average' style='font-size:20pt;float:right;' >
+</div>
+<div id='score' style='font-size:20pt;float:right;clear:right;overflow:auto;height:90%;width:4em;' ></div>
+
+<div id='out' style='font-size:60pt;display:inline-block;padding:1em;'>
+</div>
+
+</body></html>

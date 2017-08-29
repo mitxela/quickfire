@@ -1,0 +1,43 @@
+<html><head></head><body onload='newAdd(5);'>
+<script type='text/javascript'>
+var i,x,sb;
+
+function newAdd(n){
+  x=new Array(); sb="";
+  for (i=0;i<n;i++) x[i]=Math.floor(Math.random()*10);
+  disp(--i);
+  document.getElementById("input").disabled=true;
+}
+
+function disp(n) {
+  if (n>=0) {
+    document.getElementById("out").innerHTML+=x[n]+"  "; sb+="  ";
+    setTimeout("disp("+(--n)+")",1000);
+    if (!document.getElementById('all').checked)  setTimeout('document.getElementById("out").innerHTML="'+sb+'";',800);
+  } else {
+    document.getElementById("out").innerHTML="";
+    document.getElementById("input").disabled=false;
+    document.getElementById("input").focus();
+  }  
+}
+
+
+function check(ans) {
+  if (ans!=x[i--]) {
+    if (x.length>5) document.getElementById("scores").innerHTML+=(x.length-1)+"<br>";
+    alert(x.reverse().join("  "));
+    newAdd(5);
+  }
+  if (i<0) newAdd(x.length+1);
+  return "";
+}
+</script>
+<div id='scores' style='font-size:20pt;float:right;' ></div>
+
+
+<input type='text' size='30' id='input' onkeyup='this.value=check(this.value);'>
+<input type='checkbox' id='all'><label for='all'>show all at once</label>
+<pre><div id='out' style='font-size:30pt;'></div></pre>
+
+
+</body></html>

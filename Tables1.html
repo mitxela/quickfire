@@ -1,0 +1,34 @@
+<html>
+<head>
+</head>
+<body>
+<input type="text" id="num" size='3' value="5">
+<input type="button" value="Go" onclick="start()">
+<br><br>
+
+<span id="out"></span>
+<input type="text" id='inp' onkeyup="check(this)" size="3">
+
+
+<script>
+out=document.getElementById("out");
+inp==document.getElementById("inp");
+
+function start(){
+  num=document.getElementById("num").value;
+  pos=1;
+  out.innerHTML=pos+" x "+num+" = ";
+  inp.focus();
+}
+
+
+function check(){
+  if (inp.value==num*pos){
+    inp.value="";
+    out.innerHTML+=(num*pos)+"<br>"+(++pos)+" x "+num+" = ";
+  }
+}
+
+</script>
+</body>
+</html>

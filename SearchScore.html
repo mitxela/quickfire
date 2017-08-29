@@ -1,0 +1,97 @@
+<html>
+<head><title></title>
+<style>
+div {
+display:inline-block;font-family:sans-serif;
+border:2px solid #999; background-color:#ddd;
+padding:5px;margin:5px;
+cursor:pointer;
+}
+.b{
+text-align:center;
+width:800px;border:0px;
+background-color:#eee;
+cursor:default;
+}
+</style>
+</head><body>
+<span id='t'></span><br>
+<div class='b' id='main'></div>
+<canvas width='960' height='300' id='score'></canvas>
+<button onclick='reset();'>Reset</button>
+<script>
+timer=false;
+
+function reset(){
+set=new Array(100);
+count=1; time=480; 
+var a="";
+for (var i=1;i<=100;i++) {
+  do s=Math.floor(Math.random()*100+1); while (set.indexOf(s)!=-1)
+  set[i]=s;
+  a+="<div id='b"+s+"' onmousedown='check("+s+",this)'>"+s+"</div> ";
+}
+document.getElementById('main').innerHTML=a;
+clearInterval(timer); 
+document.getElementById("t").innerHTML="8:00";
+timer=setInterval(function(){
+    document.getElementById("t").innerHTML=Math.floor(--time/60)+":"+(time%60+100+"").slice(-2);
+    if (time==0) lose();
+},1000);
+ctx.globalAlpha=0.2;
+ctx.fillRect(0,0,960,300);
+ctx.globalAlpha=1;
+ctx.beginPath();
+ctx.moveTo(0,300);
+}
+
+function check(n,obj){
+  if (n==count) {
+    count++;
+    
+    plot(480-time,count);
+    
+    obj.style.backgroundColor="#9d6";
+    obj.style.borderColor="#493";
+    obj.style.cursor="default";
+    obj.onmousedown=function(){};
+    if (count==101) {
+      alert("Done!");
+      clearInterval(timer); 
+    }
+  } else {
+    lose();
+    obj.style.color="#f00";
+  }
+}
+
+function lose(){
+  clearInterval(timer); 
+  var obj,i;
+  for (i=count;i<=100;i++) {
+    obj=document.getElementById('b'+i);
+    obj.onmousedown=function(){};
+    obj.style.color="#777";
+    obj.style.cursor="default";
+  }
+}
+
+
+canvas=document.getElementById("score");
+ctx=canvas.getContext("2d");
+ctx.fillStyle="#fff";
+function plot(x,y){
+  ctx.lineTo(2*x,300-y*3);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(2*x,300-y*3);
+}
+
+reset();
+
+</script>
+
+
+
+</body>
+</html>

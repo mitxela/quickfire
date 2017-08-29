@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head><title>Minesweeper</title>
+<style>
+input[type="button"] {width:22px;height:22px;}
+table, tr, td {border:1px solid #DDDDDD;border-collapse:collapse;padding:0px;background-color:#F0F0F0;text-align:center;}
+td{width:23px;height:23px;}
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+<button onclick="init();">Reset</button> 
+<input type='radio' name='level' checked='checked' id='lb'/><label for='lb'>Beginner</label>
+<input type='radio' name='level' id='li'/><label for='li'>Intermediate</label>
+<input type='radio' name='level' id='le'/><label for='le'>Expert</label>
+<br/><br/>
+<div id='board'></div>
+
+<script>
+function init(){
+  map=[];over=false;sizey=9;sizex=9;mines=10;
+  if (document.getElementById('li').checked) {sizey=16;sizex=16;mines=40;}
+  if (document.getElementById('le').checked) {sizey=16;sizex=30;mines=99;}
+  a="<table>";
+  for (i=0;i<sizey;i++) {
+    map[i]=[];
+    a+="<tr>";
+    for (j=0;j<sizex;j++) {
+      map[i][j]=0;
+      a+="<td id='c"+i+"_"+j+"'><input type='button' onmouseup='if (event.button==2) flag(this); else check("+i+","+j+");'/></td>";
+    }
+    a+="</tr>";
+  }
+  a+="</table>";
+  
+  document.getElementById("board").innerHTML=a;
+}
+
+function populate(avoidx,avoidy){
+  time= new Date().getTime();
+  
+  while (mines--) {
+    do {i=Math.floor(Math.random()*sizey);j=Math.floor(Math.random()*sizex);} while (map[i][j]=="M" || (i==avoidy&&j==avoidx))
+    map[i][j]="M";
+  }
+  for (i=0;i<sizey;i++) 
+    for (j=0;j<sizex;j++) 
+      if (!count(i,j)){
+        map[i][j]+=
+           count(i-1,j)
+          +count(i-1,j+1)
+          +count(i-1,j-1)
+          +count(i,j-1)
+          +count(i,j+1)
+          +count(i+1,j)
+          +count(i+1,j+1)
+          +count(i+1,j-1);
+      }
+    
+  function count(x,y){        
+    return (x>=0 && x<sizey && y>=0 && y<sizex)?(map[x][y]=="M"?1:0):0;
+  }
+}
+
+function check(x,y) {
+  if (mines>0) populate(y,x);
+  if (typeof(map[x])=="undefined") return;
+  if (typeof(map[x][y])=="undefined") return;
+  if (map[x][y]=="M") {
+    over=true;
+    document.getElementById("c"+x+"_"+y).style.backgroundColor="#FF2222";
+    for (i=0;i<sizey;i++)
+      for (j=0;j<sizex;j++)
+        if (map[i][j]=="M") document.getElementById("c"+i+"_"+j).innerHTML="M";
+    return;
+  }
+  if (map[x][y]==-1) return; 
+  if (map[x][y]==0) {
+    map[x][y]=-1;
+    check(x-1,y);
+    check(x-1,y-1);
+    check(x-1,y+1);
+    check(x,y-1);
+    check(x,y+1);
+    check(x+1,y);
+    check(x+1,y-1);
+    check(x+1,y+1);
+  }
+  document.getElementById("c"+x+"_"+y).innerHTML=
+    (map[x][y]==-1)?"":"<span style='color:#"+Math.min(70*(map[x][y]-1),255).toString(16)+"0000;'>"+map[x][y]+"</span>";
+  
+  map[x][y]=-1;
+  
+  if (!over) {
+    for (i=0;i<sizey;i++)
+      for (j=0;j<sizex;j++)
+        if (map[i][j]!="M" && map[i][j]!=-1) return;
+    time=(new Date().getTime())-time;
+    alert("win!\nTook "+(time/1000).toFixed(1)+" seconds.");
+  }
+}
+
+function flag(obj) {
+  if (obj.value=="F") obj.value=""; else obj.value="F";
+  return false;
+}
+
+init();
+</script>
+</body>
+</html>

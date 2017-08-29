@@ -1,0 +1,120 @@
+<html>
+<head><title></title>
+<style>
+img{position:absolute;left:0px;top:3px;z-index:-1;}
+span{position:absolute;font-family:sans-serif;font-size:10pt;text-align:center;display:block;white-space:nowrap;}
+</style>
+</head><body>
+
+<div style='position:fixed;left:8px;top:8px;z-index:1;'>
+<input type='text' onkeyup='check(this.value,this);' id='in' />
+<div id='count' style='display:inline-block;padding:10px;'></div>
+ 
+<input type="button" onclick='giveup(this);' id='gu' value="Give up"/>
+
+<select onchange="eval('loadLabels('+this.value);" id='sel'>
+  <option value="USA)">USA</option>
+  <option value="Africa)">Africa</option>
+  <option value="England)">England</option>
+  <option value="Europe)">Europe</option>
+  <option value="China)">China</option>
+  <option value="Japan)">Japan</option>
+  <option value="Tube1)">Tube Map 1</option>
+  <option value="Tube2)">Tube Map 2</option>
+</select>
+</div>
+<br><br>
+<div id='output' style="position:relative;">
+</div>
+
+
+<script>
+USA="USA_blank.png,Washington,76,57,Oregon,67,131,Montana,240,99,Idaho,166,162,North Dakota,358,103,South Dakota,361,166,Wyoming,255,189,Utah,193,255,Colorado,279,277,Nebraska,377,227,Kansas,397,293,California,44,299,Minnesota,455,127,Wisconsin,522,152,Michigan,616,184,Iowa,487,220,Illinois,555,257,Missouri,496,292,Indiana,600,256,Ohio,660,241,Nevada,100,232,Kentucky,614,311,Virginia,729,297,Pennsylvania,714,217,New York,742,175,New Hampshire,686,40,Vermont,727,68,Massachusetts,688,93,Maine,846,93,Rhode Island,868,199,Connecticut,875,224,New Jersey,875,248,Delaware,889,274,Maryland,890,297,West Virginia,866,344,North Carolina,703,335,South Carolina,707,370,Tennessee,588,345,Arkansas,496,363,Mississippi,543,412,Alabama,601,398,Georgia,667,406,Louisiana,510,466,Florida,718,511,Arizona,167,360,New Mexico,256,374,Oklahoma,409,354,Texas,390,443,Alaska,90,491,Hawaii,244,545";
+Africa="Africa_blank.png,Guinea,107,257,Morocco,165,60,Algeria,236,101,Tunisia,310,36,Libya,373,115,Egypt,476,119,Cape Verde,11,185,Mauritania,111,175,Western <br>Sahara,91,115,Mali,203,189,Niger,298,204,Chad,389,216,Sudan,488,216,South <br>Sudan,495,286,Eritrea,566,213,Ethiopia,568,283,Djibouti,625,245,Somalia,665,305,Senegal,67,218,The Gambia,30,230,Burkina Faso,182,241,Guinea-Bissau,17,250,Sierra Leone,63,280,Liberia,111,307,Cote D'Ivore,149,295,Ghana,186,332,Togo,210,344,Benin,218,358,Nigeria,275,283,Cameroon,311,317,Central <br>African <br>Republic,400,280,Kenya,569,355,Sao Tome and Principe,130,371,Equatorial <br>Guinea,255,400,Gabon,323,368,Democratic<br> Republic of the<br> Congo,405,386,Republic of the<br> Congo,245,456,Rwanda,454,356,Uganda,518,346,Tanzania,522,425,Burundi,529,396,Angola,374,474,Zambia,463,499,Malawi,525,488,Mozambique,545,528,Namibia,361,558,Botswana,422,575,Zimbabwe,472,540,South <br>Africa,425,636,Swaziland,515,625,Lesotho,480,650,Madagascar,610,550,Comoros,608,467,Seychelles,679,431,Mauritius,701,555";
+England="England_blank.png,Northumberland,335,51,Durham,370,121,Lancashire,298,240,Cheshire,310,321,Derbyshire,394,324,Nottinghamshire,420,342,Lincolnshire,495,328,Leicestershire,413,404,Staffordshire,352,366,Shropshire,296,401,Warwickshire,384,465,Northamptonshire,430,443,Norfolk,587,394,Suffolk,601,457,Essex,569,530,Hertfordshire,493,517,Bedfordshire,492,475,Buckinghamshire,420,503,Oxfordshire,400,530,Gloucestershire,326,513,Somerset,279,611,Wiltshire,359,576,Berkshire,426,566,Kent,573,590,Surrey,489,590,Hampshire,410,608,Dorset,335,646,Devon,216,653,Cornwall,139,695,Herefordshire,300,471,Worcestershire,327,450,Bristol,293,555,East Riding <br>of Yorkshire,468,226,Rutland,478,391,Cambridgeshire,500,426,Greater <br>London,504,546,City of London,550,555,Tyne and <br>Wear,405,79,Cumbria,279,135,North Yorkshire,384,184,South <br>Yorkshire,412,282,West <br>Yorkshire,377,240,Greater <br>Manchester,333,275,Merseyside,254,289,East <br>Sussex,538,622,West <br>Sussex,475,622,Isle of <br>Wight,415,674,West <br>Midlands,370,415";
+Europe="Europe_blank.png,Faroe Islands,533,423,Iceland,480,319,Svalbard,764,120,Greenland,418,126,Albania,829,920,Andorra,520,856,Austria,750,764,Armenia,1276,793,Azerbaijan,1318,765,Belarus,924,623,Belgium,595,679,Bosnia and <br>Herzegovina,777,839,Bulgaria,932,858,Croatia,789,815,Cyprus,1110,1010,Czech <br>Republic,751,706,Denmark,678,579,Estonia,866,513,Finland,853,438,France,548,751,Germany,674,675,Georgia,1201,779,Greece,891,940,Hungary,812,780,Ireland,464,583,Italy,709,863,San Marino,702,838,Kazakhstan,1248,555,Kosovo,862,874,Latvia,875,553,Liechtenstein,670,785,Lithuania,854,585,Luxembourg,618,711,Macedonia,867,899,Malta,744,1044,Moldova,953,750,Monaco,618,835,Montenegro,794,882,Netherlands,623,639,Norway,672,485,Poland,818,662,Portugal,332,859,Romania,907,798,Russia,1052,513,Serbia,849,828,Slovakia,820,739,Slovenia,748,799,Spain,408,891,Sweden,754,504,Switzerland,631,768,Turkey,1048,912,Ukraine,968,695,United <br>Kingdom,529,621,Vatican <br>City,695,891";
+China="China_blank.png,Beijing,614,258,Chongqing,455,457,Shanghai,716,426,Tianjin,637,281,Anhui,634,430,Fujian,649,531,Gansu,426,366,Guangdong,571,574,Guizhou,452,513,Hainan,506,670,Hebei,595,293,Heilongjiang,730,114,Henan,561,387,Hubei,550,435,Hunan,540,510,Jiangsu,674,389,Jiangxi,602,509,Jilin,756,196,Liaoning,687,230,Qinghai,296,339,Shaanxi,481,386,Shandong,622,329,Shanxi,546,313,Sichuan,385,453,Yunnan,357,566,Zhejiang,671,468,Taiwan,704,572,Guangxi,488,574,Inner Mongolia,422,247,Ningxia,449,319,Tibet,135,394,Xinjiang,147,201,Hong Kong,612,603,Macau,595,620";
+Japan="Japan_blank.png,Hokkaido,624,141,Aomori,551,341,Iwate,596,410,Miyagi,591,483,Akita,546,411,Yamagata,516,481,Fukushima,546,571,Ibaraki,574,659,Tochigi,544,624,Gunma,495,646,Saitama,521,677,Chiba,579,710,Tokyo,596,765,Kanagawa,544,784,Nigata,482,599,Toyama,400,647,Ishikawa,344,656,Fukui,361,699,Yamanashi,478,705,Nagano,451,676,Gifu,407,707,Shizuoka,468,756,Aichi,419,758,Mie,381,801,Shiga,353,752,Kyoto,309,746,Osaka,307,875,Hyogo,278,766,Nara,347,820,Wakayama,320,897,Tottori,220,741,Shimane,119,780,Okayama,208,781,Hiroshima,152,806,Yamaguchi,78,839,Tokushima,246,846,Kagawa,216,826,Ehime,159,868,Kochi,209,881,Fukuoka,38,878,Saga,20,904,Nagasaki,1,941,Kumamoto,24,970,Oita,107,915,Miyazaki,103,978,Kagoshima,9,1006,Okinawa,690,994";
+Tube2="Tube_blank2.png,Ealing Common,219,766,Acton Town,338,825,Chiswick <br>Park,332,869,Turnham <br>Green,399,871,Stamford <br>Brook,449,871,Ravenscourt <br>Park,502,872,West <br>Kensington,584,870,West Brompton,552,908,Earl's <br>Court,677,872,Kensington <br>(Olympia),579,773,Barons <br>Court,587,811,Hammersmith,478,828,Goldhawk Road,468,796,Shepherd's Bush <br>Market,463,753,South Acton,361,787,Wood Lane,497,720,North <br>Acton,456,700,Acton Central,355,748,West <br>Acton,371,700,Ealing Broadway,177,690,North Ealing,246,652,East <br>Acton,483,656,White <br>City,526,656,Holland <br>Park,641,700,Shepherd's <br>Bush,588,656,Latimer Road,587,639,Ladbroke Grove,603,621,Gloucester <br>Road,715,812,Knightsbridge,745,790,Hyde Park Corner,745,769,High Street <br>Kensington,717,736,Queensway,726,701,Marble <br>Arch,812,700,Notting <br>Hill Gate,713,659,Lancaster <br>Gate,770,655,Bayswater,717,630,Edgware <br>Road,749,594,Marylebone,773,529,Edgware <br>Road,720,517,Paddington,641,529,Westbourne Park,503,585,Royal Oak,563,565,Warwick Avenue,512,548,Maida Vale,524,530,Kilburn Park,499,509,South <br>Kensington,738,873,Sloane <br>Square,816,871,Fulham Broadway,552,962,Parsons Green,572,985,Putney Bridge,576,1013,East Putney,586,1050,Southfields,593,1074,Wimbledon,591,1126,Wimbledon Park,562,1101,Gunnersbury,404,935,Kew Gardens,401,976,Richmond,403,1008,South Ealing,222,839,Northfields,212,863,Boston Manor,168,886,Osterley,175,913,Hounslow East,212,955,Hounslow Central,189,981,Hounslow <br>West,102,961,Hatton Cross,60,1001,Heathrow <br>Terminals 123,17,1021,Heathrow <br>Terminal 4,131,1061,Heathrow Terminal 5,53,1116,Euston,992,540,Great <br>Portland <br>Street,936,516,Baker <br>Street,890,534,Warren Street,946,589,Bond <br>Street,834,657,Regent's Park,915,614,Oxford <br>Circus,896,659,Victoria,840,838,St. James's <br>Park,893,822,Euston <br>Square,1057,586,Russell <br>Square,1056,626,Goodge <br>Street,986,651,Tottenham <br>Court Road,967,699,Green Park,895,740,Piccadilly <br>Circus,935,770,Charing <br>Cross,985,808,Westminster,913,871,Embankment,1065,871,Temple,1083,836,Blackfriars,1112,816,Mansion House,1104,794,Cannon Street,1135,772,Leicester Square,1047,748,Covent Garden,1066,725,Holborn,1095,701,Farringdon,1129,610,Barbican,1169,640,Chancery <br>Lane,1124,658,St. Paul's,1182,689,Bank,1223,707,Moorgate,1264,661,Liverpool <br>Street,1322,610,Shoreditch <br>High Street,1396,618,Aldgate <br>East,1408,683,Whitechapel,1478,704,Langdon Park,1608,702,Devons Road,1607,675,Bromley-<br>by-Bow,1657,643,Stepney Green,1504,678,Caledonian Road,1184,391,Holloway Road,1223,367,Arsenal,1290,341,Manor House,1298,283,Turnpike Lane,1296,241,Wood Green,1302,215,Bounds Green,1292,188,Arnos Grove,1304,160,Southgate,1316,132,Oakwood,1396,104,Cockfosters,1394,76,Upper Holloway,1254,318,Crouch Hill,1213,262,Kentish Town,1151,349,Camden <br>Road,1106,421,Kentish <br>Town West,1047,369,Mornington <br>Crescent,994,472,Camden Town,986,443,Chalk Farm,979,413,Belsize Park,948,388,Tufnell Park,1151,316,Archway,1148,283,Highgate,1149,251,East Finchley,1150,221,Finchley Central,1151,195,West Finchley,1151,155,Neasden,688,320,Wembley <br>Park,593,336,Golders Green,853,306,Brent Cross,846,280,Hendon Central,797,254,Colindale,810,229,Burnt Oak,777,204,Edgware,753,171,Stonebridge Park,459,371,Wembley Central,459,349,North Wembley,470,325,South Kenton,481,303,Perivale,210,528,Hanger Lane,231,575,Park Royal,252,612,Northwood,324,155,Croxley,294,106,Watford,293,78,Chalfont and <br>Latimer,130,46,Moor Park,299,131,Rickmansworth,177,130,Amersham,24,96,Chesham,23,40,Harrow and <br>Wealdstone,492,202,Headstone Lane,471,178,Hatch End,503,150,Carpenders Park,464,123,Bushey,518,94,Watford High Street,451,66,Watford Junction,465,40,Eastcote,299,236,Ruislip Manor,271,209,Ruislip,214,192,Ickenham,133,229,Uxbridge,29,229,Hillingdon,86,193,West Ruislip,119,170,North Harrow,402,236,Pinner,380,213,Northwood <br>Hills,346,173,South Ruislip,116,336,Ruislip <br>Gardens,148,272,West <br>Harrow,375,302,Kingsbury,663,271,Queensbury,662,244,Canons Park,662,215,Stanmore,665,187,Preston <br>Road,585,255,Northwick <br>Park,506,254,Harrow-<br>on-the-Hill,430,254,Kenton,583,239,Greenford,155,488,Alperton,268,460,Sudbury Town,231,413,Sudbury Hill,246,367,Northolt,150,394,South Harrow,237,323,Rayners Lane,230,280,Chorleywood,164,107,South <br>Hampstead,724,468,Brondesbury,687,443,Kilburn <br>High Road,661,467,Queen's Park,581,472,Kensal Green,581,449,Finchley Road <br>and Frognal,853,357,West Hampstead,787,415,Brondesbury <br>Park,650,398,Kensal <br>Rise,607,398,Willesden Junction,452,418,Harlesden,500,395,Kilburn,763,391,Willesden Green,736,369,Dollis Hill,712,343,Hampstead,900,332,Woodside Park,1150,126,Totteridge and Whetstone,1148,97,High Barnet,1150,70,Mill Hill East,1023,152,Gospel <br>Oak,1060,298,Hampstead <br>Heath,991,316,St. John's Wood,848,481,Swiss Cottage,828,461,Finchley Road,811,441,Epping,1686,33,Harringay <br>Green Lanes,1403,229,Leyton,1690,410,Leytonstone <br>High Road,1748,361,Leyton <br>Midland Road,1624,366,Walthamstow <br>Queen's Road,1504,365,Walthamstow <br>Central,1582,323,Tottenham <br>Hale,1473,325,Seven <br>Sisters,1437,278,Finsbury <br>Park,1390,342,Blackhorse <br>Road,1533,281,South Tottenham,1510,260,Leytonstone,1659,348,Grants <br>Hill,1818,331,Wanstead,1747,331,Snaresbrook,1656,266,South Woodford,1636,238,Woodford,1671,211,Redbridge,1774,302,Newbury Park,1776,280,Barkingside,1790,253,Fairlop,1818,228,Hainault,1809,203,Chigwell,1779,186,Grange <br>Hill,1808,139,Roding <br>Valley,1749,137,Buckhurst Hill,1649,125,Loughton,1676,103,Debden,1684,79,Theydon Bois,1649,57,Pontoon Dock,1791,884,London <br>City Airport,1844,912,King George V,1850,948,Custom House for ExCeL,1899,759,Prince Regent,1924,784,Royal Albert,1947,807,Beckton Park,1969,827,Cyprus,1991,850,Gallions <br>Reach,1959,896,Beckton,1987,930,Woolwich <br>Arsenal,1991,1035,Elverson Road,1606,1128,Deptford Bridge,1606,1102,Greenwich,1608,1074,Lewisham,1607,1154,Brixton,1059,1206,Denmark Hill,1108,1159,Peckham Rye,1192,1120,Queens Road <br>Peckham,1246,1055,New Cross,1481,1081,New Cross <br>Gate,1384,1078,Brockley,1384,1118,Honor Oak Park,1385,1145,Forest Hill,1384,1171,Sydenham,1386,1197,Penge West,1383,1225,Anerley,1385,1251,Crystal Palace,1229,1276,Norwood Junction,1384,1277,West Croydon,1384,1304,Highbury and <br>Islington,1328,388,Stratford <br>International,1593,421,Aldgate,1338,722,Monument,1263,785,Tower <br>Hill,1333,782,Tower <br>Gateway,1395,795,All Saints,1606,728,Rotherhithe,1394,846,Waterloo,958,908,Southwark,1075,956,Lambeth <br>North,1064,997,London <br>Bridge,1264,878,Bermondsey,1332,881,Canada <br>Water,1416,878,Shadwell,1476,741,Westferry,1535,746,Limehouse,1494,780,Wapping,1478,805,Blackwall,1624,747,Poplar,1602,776,East <br>India,1671,779,West <br>India Quay,1605,801,North <br>Greenwich,1633,877,Emirates <br>Greenwich <br>Peninsula,1705,869,Canning <br>Town,1742,722,Royal <br>Victoria,1799,731,Emirates <br>Royal Docks,1826,786,West <br>Silvertown,1859,820,Oval,984,1110,Stockwell,1005,1142,Kennington,1034,1115,Elephant and Castle,1088,1067,Borough,1153,1001,Surrey Quays,1380,921,Canary Wharf,1510,848,Heron Quays,1512,887,South Quay,1517,916,Crossharbour,1508,944,Mudchute,1529,971,Island Gardens,1500,998,Cutty Sark,1607,1044,Old Street,1270,582,Angel,1193,564,King's Cross <br>St. Pancras,1102,493,Hoxton,1418,562,Hackney <br>Wick,1560,489,Homerton,1495,490,Haggerston,1392,518,Dalston Junction,1359,476,Caledonian <br>Road and <br>Barnsbury,1257,442,Canonbury,1369,456,Hackney <br>Central,1484,427,Dalston <br>Kingsland,1415,395,Bethnal <br>Green,1486,576,Mile End,1537,590,Bow Road,1622,611,Pudding <br>Mill Lane,1662,557,Abbey <br>Road,1746,567,Stratford <br>High Street,1746,529,Woodgrange Park,1739,502,Stratford,1729,473,Wanstead Park,1741,438,Star Lane,1748,684,West Ham,1747,643,Plaistow,1785,619,Upton Park,1807,597,East Ham,1832,570,Barking,1857,545,Upney,1887,521,Becontree,1907,498,Dagenham <br>Heathway,1938,464,Elm Park,1977,429,Dagenham <br>East,1889,416,Hornchurch,1918,389,Upminster Bridge,1907,363,Upminster,1969,338,Imperial <br>Wharf,719,969,Pimlico,839,957,Vauxhall,853,1069,Clapham <br>Junction,749,1087,Wandsworth <br>Road,839,1114,Clapham High Street,829,1149,Clapham North,864,1173,Clapham Common,819,1192,Clapham South,816,1215,Balham,837,1237,Tooting Bec,879,1273,Tooting Broadway,856,1296,Colliers Wood,834,1319,South Wimbledon,810,1341,Morden,791,1364,Bow Church,1517,650";
+Tube1="Tube_blank1.png,Ealing Common,219,766,Acton Town,338,825,Chiswick <br>Park,332,869,Turnham <br>Green,399,871,Stamford <br>Brook,449,871,Ravenscourt <br>Park,502,872,West <br>Kensington,584,870,West Brompton,562,908,Earl's <br>Court,677,872,Kensington <br>(Olympia),590,770,Barons <br>Court,587,811,Hammersmith,478,828,Goldhawk Road,468,796,Shepherd's Bush <br>Market,463,753,Wood Lane,497,720,North <br>Acton,456,700,West <br>Acton,371,700,Ealing Broadway,177,690,North Ealing,246,652,East <br>Acton,483,656,White <br>City,526,656,Holland <br>Park,641,700,Shepherd's <br>Bush,588,656,Latimer Road,587,639,Ladbroke Grove,603,621,Gloucester <br>Road,715,812,Knightsbridge,745,790,Hyde Park Corner,745,769,High Street <br>Kensington,717,736,Queensway,726,701,Marble <br>Arch,812,700,Notting <br>Hill Gate,713,659,Lancaster <br>Gate,770,655,Bayswater,717,630,Edgware <br>Road,749,594,Edgware <br>Road,719,512,Marylebone,773,529,Paddington,641,529,Westbourne Park,503,585,Royal Oak,563,565,Warwick Avenue,512,548,Maida Vale,524,530,Kilburn Park,499,509,South <br>Kensington,738,873,Sloane <br>Square,816,871,Fulham Broadway,552,962,Parsons Green,572,985,Putney Bridge,576,1013,East Putney,586,1050,Southfields,593,1074,Wimbledon,591,1126,Wimbledon Park,562,1101,Gunnersbury,404,935,Kew Gardens,401,976,Richmond,403,1008,South Ealing,222,839,Northfields,212,863,Boston Manor,168,886,Osterley,175,913,Hounslow East,212,955,Hounslow Central,189,981,Hounslow <br>West,102,961,Hatton Cross,60,1001,Heathrow <br>Terminals 123,17,1021,Heathrow <br>Terminal 4,131,1061,Heathrow Terminal 5,53,1116,Euston,1013,537,Great <br>Portland <br>Street,936,516,Baker <br>Street,890,534,Warren Street,946,589,Bond <br>Street,834,657,Regent's Park,915,614,Oxford <br>Circus,896,659,Victoria,840,838,St. James's <br>Park,893,822,Euston <br>Square,1057,586,Russell <br>Square,1056,626,Goodge <br>Street,986,651,Tottenham <br>Court Road,967,699,Green Park,895,740,Piccadilly <br>Circus,935,770,Charing <br>Cross,985,808,Westminster,913,871,Embankment,1065,871,Temple,1083,836,Blackfriars,1112,816,Mansion House,1104,794,Cannon Street,1135,772,Leicester Square,1047,748,Covent Garden,1066,725,Holborn,1095,701,Farringdon,1129,610,Barbican,1169,640,Chancery <br>Lane,1124,658,St. Paul's,1182,689,Bank,1223,707,Moorgate,1264,661,Liverpool <br>Street,1322,610,Aldgate <br>East,1408,683,Whitechapel,1478,704,Bromley-<br>by-Bow,1657,643,Stepney Green,1504,678,Caledonian Road,1184,391,Holloway Road,1223,367,Arsenal,1290,341,Manor House,1298,283,Turnpike Lane,1296,241,Wood Green,1302,215,Bounds Green,1292,188,Arnos Grove,1304,160,Southgate,1316,132,Oakwood,1396,104,Cockfosters,1394,76,Kentish Town,1151,349,Mornington <br>Crescent,994,472,Camden Town,986,443,Chalk Farm,979,413,Belsize Park,948,388,Tufnell Park,1151,316,Archway,1148,283,Highgate,1149,251,East Finchley,1150,221,Finchley Central,1151,195,West Finchley,1151,155,Neasden,688,320,Wembley <br>Park,593,336,Golders Green,853,306,Brent Cross,846,280,Hendon Central,797,254,Colindale,810,229,Burnt Oak,777,204,Edgware,753,171,Stonebridge Park,459,371,Wembley Central,459,349,North Wembley,470,325,South Kenton,481,303,Perivale,210,528,Hanger Lane,231,575,Park Royal,252,612,Northwood,324,155,Croxley,294,106,Watford,293,78,Chalfont and <br>Latimer,130,46,Moor Park,299,131,Rickmansworth,177,130,Amersham,24,96,Chesham,23,40,Harrow and <br>Wealdstone,492,202,Eastcote,299,236,Ruislip Manor,271,209,Ruislip,214,192,Ickenham,133,229,Uxbridge,29,229,Hillingdon,86,193,West Ruislip,119,170,North Harrow,402,236,Pinner,380,213,Northwood <br>Hills,346,173,South Ruislip,116,336,Ruislip <br>Gardens,148,272,West <br>Harrow,375,302,Kingsbury,663,271,Queensbury,662,244,Canons Park,662,215,Stanmore,665,187,Preston <br>Road,585,255,Northwick <br>Park,506,254,Harrow-<br>on-the-Hill,430,254,Kenton,583,239,Greenford,155,488,Alperton,268,460,Sudbury Town,231,413,Sudbury Hill,246,367,Northolt,150,394,South Harrow,237,323,Rayners Lane,230,280,Chorleywood,164,107,Queen's Park,581,472,Kensal Green,581,449,West Hampstead,787,415,Willesden Junction,452,418,Harlesden,500,395,Kilburn,763,391,Willesden Green,736,369,Dollis Hill,712,343,Hampstead,900,332,Woodside Park,1150,126,Totteridge and Whetstone,1148,97,High Barnet,1150,70,Mill Hill East,1023,152,St. John's Wood,848,481,Swiss Cottage,828,461,Finchley Road,811,441,Epping,1686,33,Leyton,1690,410,Walthamstow <br>Central,1582,323,Tottenham <br>Hale,1473,325,Seven <br>Sisters,1437,278,Finsbury <br>Park,1390,342,Blackhorse <br>Road,1533,281,Leytonstone,1659,348,Grants <br>Hill,1818,331,Wanstead,1747,331,Snaresbrook,1656,266,South Woodford,1636,238,Woodford,1671,211,Redbridge,1774,302,Newbury Park,1776,280,Barkingside,1790,253,Fairlop,1818,228,Hainault,1809,203,Chigwell,1779,186,Grange <br>Hill,1808,139,Roding <br>Valley,1749,137,Buckhurst Hill,1649,125,Loughton,1676,103,Debden,1684,79,Theydon Bois,1649,57,Brixton,1059,1206,Highbury and <br>Islington,1332,397,Aldgate,1338,722,Monument,1263,785,Tower <br>Hill,1333,782,Waterloo,958,908,Southwark,1075,956,Lambeth <br>North,1064,997,London <br>Bridge,1264,878,Bermondsey,1332,881,Canada <br>Water,1416,878,North <br>Greenwich,1633,877,Canning <br>Town,1727,753,Oval,984,1110,Stockwell,1005,1142,Kennington,1034,1115,Elephant and Castle,1088,1067,Borough,1153,1001,Canary Wharf,1510,848,Old Street,1270,582,Angel,1193,564,King's Cross <br>St. Pancras,1102,493,Bethnal <br>Green,1486,576,Mile End,1537,590,Bow Road,1622,611,Stratford,1729,473,West Ham,1747,643,Plaistow,1785,619,Upton Park,1807,597,East Ham,1832,570,Barking,1857,545,Upney,1887,521,Becontree,1907,498,Dagenham <br>Heathway,1938,464,Elm Park,1977,429,Dagenham <br>East,1889,416,Hornchurch,1918,389,Upminster Bridge,1907,363,Upminster,1969,338,Pimlico,839,957,Vauxhall,853,1069,Clapham North,864,1173,Clapham Common,819,1192,Clapham South,816,1215,Balham,837,1237,Tooting Bec,879,1273,Tooting Broadway,856,1296,Colliers Wood,834,1319,South Wimbledon,810,1341,Morden,791,1364";
+
+document.getElementById('sel').onchange();
+
+
+
+
+function loadLabels(i){
+  document.getElementById('gu').value="Give up";
+  names=[];x=[];y=[];time= new Date().getTime();
+  var list=i.split(",");
+  document.getElementById('output').innerHTML="<img src='"+list.shift()+"'alt=''/>";
+  for (i=list.length/3;i--;) {
+    y[i]=list.pop();
+    x[i]=list.pop();
+    names[i]=list.pop();
+  }
+  count=names.length;
+  document.getElementById('count').innerHTML="0 / "+count;
+  document.getElementById('in').focus();
+}
+
+function check(n,obj){
+  for (var i=names.length;i--;)
+    if (n.toLowerCase()==names[i].toLowerCase().replace(/<br>/g,"")) break;
+  
+  if (i!=-1) {
+    document.getElementById('output').innerHTML+=
+      "<span style='left:"+x[i]+"px;top:"+y[i]+"px;'>"+names[i]+"</span>";
+    obj.value="";
+    scrollCentre(x[i],y[i],40);
+    names.splice(i,1);
+    x.splice(i,1);
+    y.splice(i,1);
+    document.getElementById('count').innerHTML=count-names.length+" / "+count;
+    if (names.length==0) alert("Done! Took "+timeString((new Date().getTime())-time));
+  }
+}
+
+function giveup(obj){
+  if (obj.value=="Reset") 
+    return document.getElementById('sel').onchange();
+  obj.value="Reset";
+
+  a="";
+  for(i=names.length;i--;) 
+    a+="<span style='left:"+x[i]+"px;top:"+y[i]+"px;color:red;'>"+names[i]+"</span>";
+  document.getElementById('output').innerHTML+=a;
+
+  names=[];
+}
+
+
+function timeString(ms) {
+  var s=Math.floor((ms/1000)%60),
+      m=Math.floor(ms/60000);
+  return m+(m==1?"minute ":" minutes ")+s+(s==1?" second.":" seconds.");
+}
+
+
+
+
+function scrollCentre(x,y,c){
+  
+  window.scrollTo(
+    (Math.max(0,x-window.innerWidth/2) +window.pageXOffset*3)/4,
+    (Math.max(0,y-window.innerHeight/2+130)+window.pageYOffset*3)/4
+  );
+  if (--c)
+    setTimeout(function(){scrollCentre(x,y,c)},30);
+}
+
+
+/*
+String.prototype.capitalize = function() {
+    return this.toLowerCase().replace(/(?:^|\s(?!of |the |and )|-|')\S/g, function(a) { return a.toUpperCase(); });
+};
+*/
+
+</script>
+</body>
+</html>

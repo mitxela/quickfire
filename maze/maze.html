@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head><title></title>
+<style>
+canvas {width:640px;height:480px;padding:10px;}
+form {display:inline;}
+</style>
+</head>
+<body><div align='center'>
+<form method='GET' onchange='this.submit();'>Size: <input id='s' name='s' size='1'></form> 
+<select onchange='eval(this.value);this.blur();' id='smap'>
+  <option value='drawmap=function(){};'>No map</option>
+  <option value='drawmap=Cmap;'>Collect map</option>
+  <option value='Dmap();drawmap=Fmap;'>Filled map</option>
+</select>
+<select onchange='eval(this.value);this.blur();' id='sel'>
+  <option value='tiles.src="tiles1.png";'>Dungeon</option>
+  <option value='tiles.src="tiles2.png";'>House</option>
+</select>
+<button onclick="x=Math.ceil(x/80-1)*80+46;y=Math.ceil(y/80-1)*80+40;giveup=1;this.style.display='none';">Give up</button>
+<br/>
+<canvas id="maze" width="320" height="240"></canvas>
+<canvas id="map" width="4" height="4" style="display:none;"></canvas>
+</div>
+<script>
+var maze=[], x=1,y=1,dir=1, keys=[],frame=0, giveup=0, 
+    time= new Date().getTime(),
+    size=parseInt(window.location.search.substring(3));
+if (!(size>1)) size=8; document.getElementById('s').value=size;
+
+
+
+for (i=size+2;i--;) {
+  maze[i]=[];
+  for (j=size+2;j--;) {
+    maze[i][j]=(j==0||i==0||j==size+1||i==size+1)?7:3;
+  }
+}
+
+for (i=size*size;i--;) {
+  maze[x][y]^=(dir<<3) | 4;
+  
+  while ((maze[x][y+1]&4) && (maze[x][y-1]&4) && (maze[x+1][y]&4) && (maze[x-1][y]&4)) {
+    switch (maze[x][y]>>3) {
+      case 0:x++;break;
+      case 1:y--;break;
+      case 2:y++;break;
+      case 3:x--;break;
+    }
+  }
+  
+  do { 
+    nx=x;ny=y;
+    switch(dir=Math.floor(Math.random()*4)){
+      case 0:nx=x-1;break;
+      case 1:ny=y+1;break;
+      case 2:ny=y-1;break;
+      case 3:nx=x+1;break;
+    }    
+  } while ((maze[nx][ny]&4))
+  
+  switch (dir) {
+    case 0:maze[x][y]^=1;break;
+    case 1:maze[x][y+1]^=2;break;
+    case 2:maze[x][y]^=2;break;
+    case 3:maze[x+1][y]^=1;break;
+  }
+  
+  x=nx;y=ny;
+}
+
+maze[1][1]^=2;
+
+
+
+
+//Begin game
+output=document.getElementById("maze").getContext("2d");
+map=document.getElementById('map');
+mapScale=Math.round(Math.max(2,Math.min(10,200/size)));
+mapOffset=160-Math.round(mapScale*(size+2.5)/2);
+
+keys[37]=keys[38]=keys[39]=keys[40]=0;
+document.onkeydown=function(e){keys[e.keyCode]=1;}
+document.onkeyup=function(e){keys[e.keyCode]=0;}
+x=y=size*80-40;
+px=py=0;
+
+function main(){  
+  if (x<80&&y<20) {
+    time=(new Date().getTime())-time;
+    alert("Done in "+time/1000+" seconds");
+    window.location=window.location; return;
+  }
+
+  var nx=0,ny=0,speed=Math.min(4,frame+2),
+    dx=keys[39]-keys[37],
+    dy=keys[40]-keys[38];
+
+  setTimeout(main,30);
+  
+  if (giveup) {
+    switch (maze[Math.ceil(x/80)][Math.ceil(y/80)]>>3) {
+      case 0:dx=1;dy=py;break;
+      case 1:dy=-1;dx=px;break;
+      case 2:dy=1;dx=px;break;
+      case 3:dx=-1;dy=py;break;
+    }
+    if ((y-38)%80>16) py=dy; else py=0;
+    if ((x-38)%80>16) px=dx; else px=0;
+    speed=8;frame+=.5;
+  } 
+  
+  
+  if (dx!=0 && dy==0) {nx=speed*dx;dir=dx+2;frame+=0.5;}
+  else if (dy!=0 && dx==0) {ny=speed*dy;dir=1-dy;frame+=0.5;}
+  else if (dy!=0 && dx!=0) {nx=speed*dx/1.4;ny=speed*dy/1.4;frame+=0.5;}
+  else {frame=-0.5;}
+  
+  if (collision(x+nx,y+ny)){
+    while (collision(x+nx,y)&&nx) {nx-=dx/10;}
+    while (collision(x,y+ny)&&ny) {ny-=dy/10;}
+  }
+  if (!collision(x+nx,y+ny)){x+=nx;y+=ny;}
+  else if (Math.round(nx)!==0 && Math.round(ny)!==0) {x+=nx;}
+  
+  
+  maze[Math.ceil(x/80)+1][Math.ceil(y/80)+1]&=~4;
+  if (x<(size-1)*80) maze[Math.ceil(x/80)+2][Math.ceil(y/80)+1]&=~4;
+  if (y<(size-1)*80) maze[Math.ceil(x/80)+1][Math.ceil(y/80)+2]&=~4;
+  
+  
+
+  dx=Math.max(Math.min(Math.round(80-x),-80),240-size*80);
+  dy=Math.max(Math.min(Math.round(40-y),-80),160-size*80);
+
+  for (var i=Math.max(Math.floor(x/80)-2,1);i<=Math.ceil(x/80+3)&&i<=size;i++) {
+    for (var j=Math.max(Math.floor(y/80)-2,1);j<=Math.ceil(y/80+2)&&j<=size;j++) {
+      output.drawImage(tiles, (maze[i][j]&3)*41, 0,40,40,dx+i*80,dy+j*80,40,40);
+      output.drawImage(tiles, (maze[i][j]&2 | maze[i+1][j]&1)*41, 41,40,40,dx+i*80+40,dy+j*80,40,40);
+      output.drawImage(tiles, (maze[i][j]&1 | maze[i][j+1]&2)*41, 82,40,40,dx+i*80,dy+j*80+40,40,40);
+      output.drawImage(tiles, (maze[i][j+1]&2 | maze[i+1][j]&1)*41, 123,40,40,dx+i*80+40,dy+j*80+40,40,40);
+    }
+  }  
+  output.drawImage(sprites, (Math.floor(frame)%8+1)*20, dir*32,20,32, Math.round(x)+64+dx, Math.round(y)+59+dy, 20,32);
+  
+  drawmap();
+}
+
+
+function collision(nx,ny){
+  nx=Math.round(nx); ny=Math.round(ny);
+  var sq=maze[Math.floor((nx+25)/80+1)][Math.floor((ny+31)/80+1)];
+  return (
+    (sq&1 && (nx+42)%80>16) ||
+    (sq&2 && (ny+48)%80>16) ||
+    ((nx-38)%80>16 && (ny-32)%80>16)
+  )
+}
+
+function Cmap(){  
+  var scale=mapScale, ox=mapOffset, oy=ox-40;
+  output.globalAlpha=.4;
+  output.fillStyle='white';
+  output.fillRect(ox+scale*.5,oy+scale*.5,scale*(size+1.5),scale*(size+1.5));
+  output.fillStyle='black';
+  for (var i=1;i<size+1;i++) {
+    for (var j=1;j<size+1;j++) {
+      if (!(maze[i+1][j+1]&4)) {
+        if (maze[i][j]&1) output.fillRect(ox+i*scale,oy+(j+.5)*scale,scale/2,scale/2);
+        if (maze[i][j]&2) output.fillRect(ox+(i+.5)*scale,oy+j*scale,scale/2,scale/2); 
+        output.fillRect(ox+i*scale,oy+j*scale,scale/2,scale/2);
+      }
+    }
+  }
+  output.fillRect(ox+(size+1)*scale,oy+scale,scale/2,size*scale);
+  output.fillRect(ox+scale,oy+(size+1)*scale,(size+.5)*scale,scale/2);
+  
+  output.globalAlpha=1;
+  output.fillStyle='red';
+  output.fillRect(ox+scale*(x/80+1),oy+scale*(y/80+1),scale/2,scale/2);
+}
+
+
+function Fmap(){
+  var scale=mapScale, ox=mapOffset, oy=ox-40;
+  output.globalAlpha=.4;
+  output.fillStyle='white';
+  output.fillRect(ox+scale*.5,oy+scale*.5,scale*(size+1.5),scale*(size+1.5));
+  output.drawImage(map,0,0,map.width,map.height,ox+scale*.5,oy+scale*.5,map.width,map.height);
+  output.globalAlpha=1;
+  output.fillStyle='red';
+  output.fillRect(ox+scale*(x/80+1),oy+scale*(y/80+1),scale/2,scale/2);
+
+}
+
+function Dmap(){ 
+  if (map.width!=4) return;
+  var scale=mapScale, mapctx=map.getContext("2d"),i,j;
+  map.width=map.height=(size+1.5)*scale;
+  for (i=0;i<size;i++) {
+    for (j=0;j<size;j++) {
+      if (maze[i+1][j+1]&1) mapctx.fillRect((i+.5)*scale,(j+1)*scale,scale/2,scale/2);
+      if (maze[i+1][j+1]&2) mapctx.fillRect((i+1)*scale,(j+.5)*scale,scale/2,scale/2); 
+      mapctx.fillRect((i+.5)*scale,(j+.5)*scale,scale/2,scale/2);
+    }
+  }
+  mapctx.fillRect((size+.5)*scale,scale/2,scale/2,size*scale);
+  mapctx.fillRect(scale/2,(size+.5)*scale,(size+.5)*scale,scale/2);
+}
+
+
+
+window.onload=function(){main();}
+
+var tiles=new Image, sprites=new Image;
+tiles.src='tiles1.png';
+sprites.src='link.png';
+document.getElementById('sel').onchange();
+document.getElementById('smap').onchange();
+
+
+
+</script>
+</body>
+</html>
