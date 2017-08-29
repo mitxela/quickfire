@@ -67,6 +67,7 @@ function timeString(ms) {
       m=Math.floor(ms/60000);
   return m+(m==1?"minute ":" minutes ")+s+(s==1?" second.":" seconds.");
 }
+document.onkeydown=function(){document.querySelector('input[type=text]').focus()}
 </script>
 </body>
 </html>
